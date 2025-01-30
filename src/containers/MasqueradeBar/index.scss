@@ -12,21 +12,38 @@
     align-items: center;
     margin-bottom: 0;
     white-space: nowrap;
-
-    &>.pgn__icon {
-      margin-right: map-get($spacers, 3);
-    }
+    color: #111827;
+    gap: 16px;
   }
 
   .masquerade-form-input {
     margin-bottom: 0;
     flex-grow: 1;
-    max-width: map-get($grid-breakpoints, 'md');
+    max-width: map-get($grid-breakpoints, "md");
   }
 
   .masquerade-chip {
     padding: map-get($spacers, 2) map-get($spacers, 3);
     font-size: $font-size-base;
+  }
+
+  .pgn__form-control-floating-label-text {
+    color: #111827;
+  }
+  .action_btn {
+    background-color: #4600c7 !important;
+    border-color: #4600c7 !important;
+  }
+}
+
+.masquerade-Wrapper {
+  .masquerade-bar{
+margin-bottom: 0;
+  }
+  .container-mw-xl {
+    max-width: 1600px !important;
+    padding: 0 30px !important;
+    margin-bottom: 0;
   }
 }
 

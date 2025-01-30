@@ -36,8 +36,8 @@ export const MasqueradeBar = () => {
   if (!canMasquerade) { return null; }
 
   return (
-    <div className="w-100 shadow-sm px-2">
-      <Form className="masquerade-bar w-100">
+    <div className="shadow-sm px-2 w-100 masquerade-Wrapper">
+      <Form className="masquerade-bar">
         {isMasquerading ? (
           <>
             <FormLabel inline className="masquerade-form-label">
@@ -78,7 +78,7 @@ export const MasqueradeBar = () => {
               labels={{
                 default: formatMessage(messages.SubmitButton),
               }}
-              className="mr-3"
+              className="mr-3 action_btn"
               state={isMasqueradingPending ? 'pending' : 'default'}
               type="submit"
             />
