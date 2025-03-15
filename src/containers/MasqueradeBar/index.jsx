@@ -78,7 +78,7 @@ export const MasqueradeBar = () => {
               labels={{
                 default: formatMessage(messages.SubmitButton),
               }}
-              className="mr-3 action_btn"
+              className="mr-3"
               state={isMasqueradingPending ? 'pending' : 'default'}
               type="submit"
             />

@@ -26,25 +26,6 @@
     padding: map-get($spacers, 2) map-get($spacers, 3);
     font-size: $font-size-base;
   }
-
-  .pgn__form-control-floating-label-text {
-    color: #111827;
-  }
-  .action_btn {
-    background-color: #4600c7 !important;
-    border-color: #4600c7 !important;
-  }
-}
-
-.masquerade-Wrapper {
-  .masquerade-bar{
-margin-bottom: 0;
-  }
-  .container-mw-xl {
-    max-width: 1600px !important;
-    padding: 0 30px !important;
-    margin-bottom: 0;
-  }
 }
 
 @include media-breakpoint-down(md) {
