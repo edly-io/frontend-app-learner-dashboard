@@ -4,13 +4,22 @@ import { reduxHooks } from 'hooks';
 
 const CourseProgress = ({ cardId }) => {
   const { completionSummary } = reduxHooks.useCardGradeData(cardId);
+  const progress = Math.max(0, Math.min(Number(completionSummary) || 0, 100));
 
   return (
     <div className="course-progress">
       <div className="progress">
-        <div className="progress-bar bg-primary" style={{ width: `${completionSummary}%` }} />
+        <div
+          className="progress-bar bg-primary"
+          role="progressbar"
+          aria-label={`Course progress: ${progress}%`}
+          aria-valuenow={progress}
+          aria-valuemin="0"
+          aria-valuemax="100"
+          style={{ width: `${progress}%` }}
+        />
       </div>
-      <span className="progress-label">{completionSummary}%</span>
+      <span className="progress-label">{progress}%</span>
     </div>
   );
 };
@@ -18,7 +27,5 @@ const CourseProgress = ({ cardId }) => {
 CourseProgress.propTypes = {
   cardId: PropTypes.string.isRequired,
 };
-
-CourseProgress.defaultProps = {};
 
 export default CourseProgress;
