@@ -4,7 +4,7 @@ import { reduxHooks } from 'hooks';
 
 const CourseProgress = ({ cardId }) => {
   const { completionSummary } = reduxHooks.useCardGradeData(cardId);
-  const progress = Math.max(0, Math.min(Number(completionSummary) || 0, 100));
+  const progress = Math.max(0, Math.min(Math.round(Number(completionSummary)) || 0, 100));
 
   return (
     <div className="course-progress">
