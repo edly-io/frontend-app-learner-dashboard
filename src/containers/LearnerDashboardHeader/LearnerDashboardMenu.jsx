@@ -31,6 +31,12 @@ const getLearnerHeaderMenu = (
       },
     }]
       : []),
+    {
+      type: 'item',
+      href: `${getConfig().LEARNING_BASE_URL}/sessions/calendar`,
+      content: formatMessage(messages.calendar),
+      isActive: false,
+    },
   ],
   secondaryMenu: [
     ...(getConfig().SUPPORT_URL ? [{
