@@ -66,6 +66,11 @@ const messages = defineMessages({
     defaultMessage: 'Calendar',
     description: 'Header link for switching to calendar page.',
   },
+  administration: {
+    id: 'learnerVariantDashboard.administration',
+    defaultMessage: 'Administrations',
+    description: 'Header link for navigating to the FBR admin console.',
+  },
   logoAltText: {
     id: 'learnerVariantDashboard.logoAltText',
     defaultMessage: 'edX, Inc. Dashboard',
