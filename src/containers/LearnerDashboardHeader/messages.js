@@ -61,11 +61,6 @@ const messages = defineMessages({
     defaultMessage: 'Discover New',
     description: 'Header link for switching to discover page.',
   },
-  administration: {
-    id: 'learnerVariantDashboard.administration',
-    defaultMessage: 'Administrations',
-    description: 'Header link for navigating to the FBR admin console.',
-  },
   logoAltText: {
     id: 'learnerVariantDashboard.logoAltText',
     defaultMessage: 'edX, Inc. Dashboard',

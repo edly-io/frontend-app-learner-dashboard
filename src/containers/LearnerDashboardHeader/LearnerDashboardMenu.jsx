@@ -31,11 +31,6 @@ const getLearnerHeaderMenu = (
       },
     }]
       : []),
-    ...(getConfig().FBR_ADMIN_MICROFRONTEND_URL ? [{
-      type: 'item',
-      href: `${getConfig().FBR_ADMIN_MICROFRONTEND_URL}`,
-      content: formatMessage(messages.administration),
-    }] : []),
   ],
   secondaryMenu: [
     ...(getConfig().SUPPORT_URL ? [{
