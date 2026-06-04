@@ -61,11 +61,6 @@ const messages = defineMessages({
     defaultMessage: 'Discover New',
     description: 'Header link for switching to discover page.',
   },
-  calendar: {
-    id: 'learnerVariantDashboard.calendar',
-    defaultMessage: 'Calendar',
-    description: 'Header link for switching to calendar page.',
-  },
   administration: {
     id: 'learnerVariantDashboard.administration',
     defaultMessage: 'Administrations',
