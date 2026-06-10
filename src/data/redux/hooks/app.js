@@ -15,6 +15,7 @@ export const useEnterpriseDashboardData = () => useSelector(selectors.enterprise
 export const usePlatformSettingsData = () => useSelector(selectors.platformSettings);
 export const useSelectSessionModalData = () => useSelector(selectors.selectSessionModal);
 export const useSocialShareSettings = () => useSelector(selectors.socialShareSettings);
+export const useAllCourseData = () => useSelector(selectors.courseData);
 
 /** global-level meta-selectors **/
 export const useHasCourses = () => useSelector(selectors.hasCourses);
