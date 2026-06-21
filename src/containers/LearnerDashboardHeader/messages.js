@@ -61,6 +61,16 @@ const messages = defineMessages({
     defaultMessage: 'Discover New',
     description: 'Header link for switching to discover page.',
   },
+  calendar: {
+    id: 'learnerVariantDashboard.calendar',
+    defaultMessage: 'Calendar',
+    description: 'Header link for switching to sessions page.',
+  },
+  adminConsole: {
+    id: 'learnerVariantDashboard.adminConsole',
+    defaultMessage: 'Admin Console',
+    description: 'Header link for switching to admin console page.',
+  },
   logoAltText: {
     id: 'learnerVariantDashboard.logoAltText',
     defaultMessage: 'edX, Inc. Dashboard',

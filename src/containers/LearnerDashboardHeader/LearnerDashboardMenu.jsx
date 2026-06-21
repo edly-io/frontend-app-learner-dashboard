@@ -4,6 +4,26 @@ import urls from 'data/services/lms/urls';
 
 import messages from './messages';
 
+const normalizePath = (value) => {
+  try {
+    const url = new URL(value, window.location.origin);
+    return url.pathname.replace(/\/+$/, '') || '/';
+  } catch {
+    return '/';
+  }
+};
+
+const isActivePath = (href) => {
+  const currentPath = normalizePath(window.location.href);
+  const targetPath = normalizePath(href);
+
+  if (targetPath === '/dashboard' && currentPath.startsWith('/learner-dashboard')) {
+    return true;
+  }
+
+  return currentPath === targetPath || currentPath.startsWith(`${targetPath}/`);
+};
+
 const getLearnerHeaderMenu = (
   formatMessage,
   courseSearchUrl,
@@ -13,24 +33,37 @@ const getLearnerHeaderMenu = (
   mainMenu: [
     {
       type: 'item',
-      href: '/',
+      href: getConfig().LEARNER_DASHBOARD_URL || '/',
       content: formatMessage(messages.course),
-      isActive: true,
+      isActive: isActivePath(getConfig().LEARNER_DASHBOARD_URL || '/dashboard'),
     },
     ...(getConfig().ENABLE_PROGRAMS ? [{
       type: 'item',
       href: `${urls.programsUrl()}`,
       content: formatMessage(messages.program),
+      isActive: isActivePath(urls.programsUrl()),
     }] : []),
     ...(!getConfig().NON_BROWSABLE_COURSES ? [{
       type: 'item',
       href: `${urls.baseAppUrl(courseSearchUrl)}`,
       content: formatMessage(messages.discoverNew),
+      isActive: isActivePath(urls.baseAppUrl(courseSearchUrl)),
       onClick: (e) => {
         exploreCoursesClick(e);
       },
-    }]
-      : []),
+    }] : []),
+    ...(getConfig().SESSIONS_BASE_URL ? [{
+      type: 'item',
+      href: `${getConfig().SESSIONS_BASE_URL}`,
+      content: formatMessage(messages.calendar),
+      isActive: isActivePath(getConfig().SESSIONS_BASE_URL),
+    }] : []),
+    ...(authenticatedUser?.administrator && (getConfig().FBR_ADMIN_BASE_URL || getConfig().FBR_ADMIN_MICROFRONTEND_URL) ? [{
+      type: 'item',
+      href: `${getConfig().FBR_ADMIN_BASE_URL || getConfig().FBR_ADMIN_MICROFRONTEND_URL}`,
+      content: formatMessage(messages.adminConsole),
+      isActive: isActivePath(getConfig().FBR_ADMIN_BASE_URL || getConfig().FBR_ADMIN_MICROFRONTEND_URL),
+    }] : []),
   ],
   secondaryMenu: [
     ...(getConfig().SUPPORT_URL ? [{
