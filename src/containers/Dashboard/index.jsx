@@ -5,6 +5,7 @@ import { RequestKeys } from 'data/constants/requests';
 import SelectSessionModal from 'containers/SelectSessionModal';
 import CoursesPanel from 'containers/CoursesPanel';
 import DashboardModalSlot from 'plugin-slots/DashboardModalSlot';
+import FeedbackModal from 'containers/FeedbackModal';
 
 import LoadingView from './LoadingView';
 import DashboardLayout from './DashboardLayout';
@@ -24,6 +25,7 @@ export const Dashboard = () => {
       {!initIsPending && (
         <>
           <DashboardModalSlot />
+          <FeedbackModal />
           {(hasCourses && showSelectSessionModal) && <SelectSessionModal />}
         </>
       )}

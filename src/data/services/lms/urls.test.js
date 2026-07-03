@@ -54,4 +54,16 @@ describe('urls', () => {
       expect(url).toEqual(expect.stringContaining(providerId));
     });
   });
+  describe('feedback URLs', () => {
+    it('builds the pending feedback URL from the LMS base URL', () => {
+      expect(urls.feedbackPending()).toEqual(
+        `${getConfig().LMS_BASE_URL}/fbr/api/feedback/pending/`,
+      );
+    });
+    it('builds the submit feedback URL from the LMS base URL and request id', () => {
+      expect(urls.feedbackSubmit(42)).toEqual(
+        `${getConfig().LMS_BASE_URL}/fbr/api/feedback/42/submit/`,
+      );
+    });
+  });
 });

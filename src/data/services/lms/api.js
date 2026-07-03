@@ -65,6 +65,13 @@ export const createCreditRequest = ({ providerId, courseId, username }) => post(
   { course_key: courseId, username },
 );
 
+export const getPendingFeedbackRequests = () => get(urls.feedbackPending());
+
+export const submitFeedbackRequest = ({ requestId, answers }) => client().post(
+  urls.feedbackSubmit(requestId),
+  { answers },
+);
+
 export default {
   initializeList,
   unenrollFromCourse,
@@ -74,4 +81,6 @@ export default {
   logEvent,
   logShare,
   createCreditRequest,
+  getPendingFeedbackRequests,
+  submitFeedbackRequest,
 };

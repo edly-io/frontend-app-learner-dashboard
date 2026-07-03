@@ -1,0 +1,31 @@
+.feedback-modal {
+  .pgn__modal-body {
+    max-height: min(76vh, 48rem);
+  }
+
+  .feedback-request-group {
+    border: 1px solid var(--pgn-color-light-400, #e1e1e1);
+    border-radius: .5rem;
+    margin-bottom: 1rem;
+  }
+
+  .feedback-request-summary {
+    cursor: pointer;
+    font-weight: 700;
+    padding: 1rem;
+  }
+
+  .feedback-request-card {
+    border-top: 1px solid var(--pgn-color-light-400, #e1e1e1);
+    padding: 1rem;
+  }
+
+  .feedback-rating-row {
+    display: flex;
+    gap: .25rem;
+  }
+
+  .feedback-rating-button {
+    min-width: 2.25rem;
+  }
+}
