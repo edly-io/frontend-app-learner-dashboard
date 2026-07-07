@@ -28,6 +28,14 @@ export const CertificateBanner = ({ cardId }) => {
 
   const emailLink = address => <MailtoLink to={address}>{address}</MailtoLink>;
 
+  if (certificate.hasActiveCertificate === false) {
+    return (
+      <Banner>
+        {formatMessage(messages.noCertificateOffered)}
+      </Banner>
+    );
+  }
+
   if (certificate.isRestricted) {
     return (
       <Banner variant="danger">
