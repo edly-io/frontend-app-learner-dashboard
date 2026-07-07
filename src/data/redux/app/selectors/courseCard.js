@@ -23,6 +23,7 @@ export const courseCard = StrictDict({
       isEarnedButUnavailable: certificate.isEarned && new Date(certificate.availableDate) > new Date(),
       isRestricted: certificate.isRestricted,
       isEarned: certificate.isEarned,
+      hasActiveCertificate: certificate.hasActiveCertificate ?? true,
     })),
   ),
   course: mkCardSelector(

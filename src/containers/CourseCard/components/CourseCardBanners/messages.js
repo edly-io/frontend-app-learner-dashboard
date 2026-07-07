@@ -91,6 +91,11 @@ const messages = defineMessages({
     description: 'Entitlement session selection link text',
     defaultMessage: 'select a session',
   },
+  noCertificateOffered: {
+    id: 'learner-dash.courseCard.banners.noCertificateOffered',
+    description: 'Message shown when the course does not have an active certificate',
+    defaultMessage: 'This course does not offer a certificate',
+  },
   prerequisitesNotMet: {
     id: 'learner-dash.courseCard.banners.prerequisitesNotMet',
     description: 'Message to learners with unmet prerequisites',
