@@ -7,15 +7,13 @@ import ConfirmEmailBanner from './ConfirmEmailBanner';
 
 import './index.scss';
 
-export const LearnerDashboardHeader = () => {
-  return (
-    <>
-      <ConfirmEmailBanner />
-      <Header />
-      <MasqueradeBar />
-    </>
-  );
-};
+export const LearnerDashboardHeader = () => (
+  <>
+    <ConfirmEmailBanner />
+    <Header />
+    <MasqueradeBar />
+  </>
+);
 
 LearnerDashboardHeader.propTypes = {};
 
