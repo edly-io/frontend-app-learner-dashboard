@@ -12,8 +12,9 @@ import {
 
 jest.mock('./utils', () => {
   const deleteFn = (...args) => ({ delete: args });
+  const clientPost = (...args) => ({ clientPost: args });
   return {
-    client: () => ({ delete: deleteFn }),
+    client: () => ({ delete: deleteFn, post: clientPost }),
     delete: deleteFn,
     get: (...args) => ({ get: args }),
     post: jest.fn((...args) => ({ post: args })),
@@ -151,6 +152,21 @@ describe('lms api methods', () => {
           { course_key: courseId, username },
         );
       });
+    });
+  });
+  describe('feedback requests', () => {
+    it('gets pending feedback requests', () => {
+      expect(api.getPendingFeedbackRequests()).toEqual(
+        utils.get(urls.feedbackPending()),
+      );
+    });
+    it('submits feedback answers as JSON', () => {
+      const requestId = 42;
+      const answers = [{ question_id: 7, star_value: 4 }];
+
+      expect(api.submitFeedbackRequest({ requestId, answers })).toEqual(
+        utils.client().post(urls.feedbackSubmit(requestId), { answers }),
+      );
     });
   });
 });

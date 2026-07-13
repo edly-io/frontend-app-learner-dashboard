@@ -12,6 +12,8 @@ const event = () => `${getBaseUrl()}/event`;
 const courseUnenroll = () => `${getBaseUrl()}/change_enrollment`;
 const updateEmailSettings = () => `${getApiUrl()}/change_email_settings`;
 const entitlementEnrollment = (uuid) => `${getApiUrl()}/entitlements/v1/entitlements/${uuid}/enrollments`;
+export const feedbackPending = () => `${getBaseUrl()}/fbr/api/feedback/pending/`;
+export const feedbackSubmit = (requestId) => `${getBaseUrl()}/fbr/api/feedback/${requestId}/submit/`;
 
 // if url is null or absolute, return it as is
 export const updateUrl = (base, url) => ((url == null || url.startsWith('http://') || url.startsWith('https://')) ? url : `${base}${url}`);
@@ -38,6 +40,8 @@ export default StrictDict({
   creditRequestUrl,
   entitlementEnrollment,
   event,
+  feedbackPending,
+  feedbackSubmit,
   getInitApiUrl,
   learningMfeUrl,
   programsUrl,
