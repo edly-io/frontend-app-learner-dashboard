@@ -78,15 +78,17 @@ const hasMissingRequiredAnswers = (request, requestAnswers) => sortQuestions(req
 export const FeedbackModal = ({
   loadFeedbackRequests = getPendingFeedbackRequests,
   submitFeedback = submitFeedbackRequest,
+  renderTrigger = null,
 }) => {
   const { formatMessage } = useIntl();
   const [requests, setRequests] = useState([]);
   const [answers, setAnswers] = useState({});
-  const [dismissed, setDismissed] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [submitErrors, setSubmitErrors] = useState({});
   const [submittingRequestId, setSubmittingRequestId] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -108,6 +110,11 @@ export const FeedbackModal = ({
         }
 
         setLoadError(true);
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoaded(true);
+        }
       });
 
     return () => {
@@ -116,7 +123,6 @@ export const FeedbackModal = ({
   }, [loadFeedbackRequests]);
 
   const groupedRequests = useMemo(() => groupByFeedbackName(requests), [requests]);
-  const isOpen = !dismissed && (requests.length > 0 || loadError);
 
   const handleAnswerChange = (requestId, questionId, value) => {
     setAnswers((currentAnswers) => ({
@@ -160,31 +166,39 @@ export const FeedbackModal = ({
     }
   };
 
+  const hasVisibleContent = requests.length > 0 || loadError;
+  const trigger = renderTrigger?.({
+    openModal: () => setIsOpen(true),
+    isDisabled: isLoaded && !hasVisibleContent,
+  });
+
   return (
-    <ModalDialog
-      title={formatMessage(messages.title)}
-      isOpen={isOpen}
-      onClose={() => setDismissed(true)}
-      hasCloseButton
-      isFullscreenOnMobile
-      size="xl"
-      className="feedback-modal p-4"
-    >
-      <ModalDialog.Header>
-        <ModalDialog.Title>{formatMessage(messages.title)}</ModalDialog.Title>
-      </ModalDialog.Header>
-      <ModalDialog.Body>
-        {loadError ? (
-          <Alert variant="danger">{formatMessage(messages.loadError)}</Alert>
-        ) : (
-          <>
-            <p>{formatMessage(messages.intro)}</p>
-            {Object.entries(groupedRequests).map(([feedbackName, feedbackRequests]) => (
-              <details className="feedback-request-group" key={feedbackName} open>
-                <summary className="feedback-request-summary">
-                  {feedbackName}
-                </summary>
-                {feedbackRequests.map((request) => {
+    <>
+      {trigger}
+      <ModalDialog
+        title={formatMessage(messages.title)}
+        isOpen={isOpen && hasVisibleContent}
+        onClose={() => setIsOpen(false)}
+        hasCloseButton
+        isFullscreenOnMobile
+        size="xl"
+        className="feedback-modal p-4"
+      >
+        <ModalDialog.Header>
+          <ModalDialog.Title>{formatMessage(messages.title)}</ModalDialog.Title>
+        </ModalDialog.Header>
+        <ModalDialog.Body>
+          {loadError ? (
+            <Alert variant="danger">{formatMessage(messages.loadError)}</Alert>
+          ) : (
+            <>
+              <p>{formatMessage(messages.intro)}</p>
+              {Object.entries(groupedRequests).map(([feedbackName, feedbackRequests]) => (
+                <details className="feedback-request-group" key={feedbackName} open>
+                  <summary className="feedback-request-summary">
+                    {feedbackName}
+                  </summary>
+                  {feedbackRequests.map((request) => {
                   const requestAnswers = answers[request.id] ?? {};
                   const isSubmitting = submittingRequestId === request.id;
                   const deadlinePassed = request.status === 'Not Submitted';
@@ -199,86 +213,85 @@ export const FeedbackModal = ({
                         <p className="small text-muted mb-1">
                           {formatMessage(messages.subject)}: {subjectName}
                         </p>
-                        <p className="small text-muted mb-1">
-                          {formatMessage(messages.program)}: {request.program_name}
-                        </p>
                         <p className="small text-muted mb-0">
                           {formatMessage(messages.deadline)}: {formatDate(request.deadline)}
                         </p>
                       </div>
 
-                      {deadlinePassed && (
-                        <Alert variant="warning">{formatMessage(messages.deadlinePassed)}</Alert>
-                      )}
+                        {deadlinePassed && (
+                          <Alert variant="warning">{formatMessage(messages.deadlinePassed)}</Alert>
+                        )}
 
-                      {validationErrors[request.id] && (
-                        <Alert variant="danger">{validationErrors[request.id]}</Alert>
-                      )}
+                        {validationErrors[request.id] && (
+                          <Alert variant="danger">{validationErrors[request.id]}</Alert>
+                        )}
 
-                      {submitErrors[request.id] && (
-                        <Alert variant="danger">{submitErrors[request.id]}</Alert>
-                      )}
+                        {submitErrors[request.id] && (
+                          <Alert variant="danger">{submitErrors[request.id]}</Alert>
+                        )}
 
-                      {sortQuestions(request.questions).map((question) => (
-                        <Form.Group key={question.id} className="mb-4">
-                          <Form.Label className="font-weight-bold">
-                            {question.question}
-                          </Form.Label>
-                          {question.question_type === 'star_rating' ? (
-                            <div className="feedback-rating-row" role="radiogroup" aria-label={question.question}>
-                              {[1, 2, 3, 4, 5].map((rating) => (
-                                <Button
-                                  key={rating}
-                                  type="button"
-                                  variant={Number(requestAnswers[question.id]) === rating ? 'primary' : 'outline-primary'}
-                                  className="feedback-rating-button"
-                                  onClick={() => handleAnswerChange(request.id, question.id, rating)}
-                                >
-                                  {rating}
-                                </Button>
-                              ))}
-                            </div>
-                          ) : (
-                            <Form.Control
-                              as="textarea"
-                              rows={4}
-                              value={requestAnswers[question.id] ?? ''}
-                              placeholder={formatMessage(messages.commentPlaceholder)}
-                              onChange={(event) => handleAnswerChange(request.id, question.id, event.target.value)}
-                            />
-                          )}
-                        </Form.Group>
-                      ))}
+                        {sortQuestions(request.questions).map((question) => (
+                          <Form.Group key={question.id} className="mb-4">
+                            <Form.Label className="font-weight-bold">
+                              {question.question}
+                            </Form.Label>
+                            {question.question_type === 'star_rating' ? (
+                              <div className="feedback-rating-row" role="radiogroup" aria-label={question.question}>
+                                {[1, 2, 3, 4, 5].map((rating) => (
+                                  <Button
+                                    key={rating}
+                                    type="button"
+                                    variant={Number(requestAnswers[question.id]) === rating ? 'primary' : 'outline-primary'}
+                                    className="feedback-rating-button"
+                                    onClick={() => handleAnswerChange(request.id, question.id, rating)}
+                                  >
+                                    {rating}
+                                  </Button>
+                                ))}
+                              </div>
+                            ) : (
+                              <Form.Control
+                                as="textarea"
+                                rows={4}
+                                value={requestAnswers[question.id] ?? ''}
+                                placeholder={formatMessage(messages.commentPlaceholder)}
+                                onChange={(event) => handleAnswerChange(request.id, question.id, event.target.value)}
+                              />
+                            )}
+                          </Form.Group>
+                        ))}
 
-                      <Button
-                        variant="primary"
-                        onClick={() => handleSubmit(request)}
-                        disabled={deadlinePassed || !!submittingRequestId}
-                      >
-                        {isSubmitting ? formatMessage(messages.submitting) : formatMessage(messages.submit)}
-                      </Button>
-                    </div>
-                  );
-                })}
-              </details>
-            ))}
-          </>
-        )}
-      </ModalDialog.Body>
-      <ModalDialog.Footer>
-        <ActionRow>
-          <Button variant="tertiary" onClick={() => setDismissed(true)}>
-            {formatMessage(messages.later)}
-          </Button>
-        </ActionRow>
-      </ModalDialog.Footer>
-    </ModalDialog>
+                        <Button
+                          variant="primary"
+                          onClick={() => handleSubmit(request)}
+                          disabled={deadlinePassed || !!submittingRequestId}
+                        >
+                          {isSubmitting ? formatMessage(messages.submitting) : formatMessage(messages.submit)}
+                        </Button>
+                      </div>
+                    );
+                  })}
+                </details>
+              ))}
+            </>
+          )}
+        </ModalDialog.Body>
+        <ModalDialog.Footer>
+          <ActionRow>
+            <Button variant="tertiary" onClick={() => setIsOpen(false)}>
+              {formatMessage(messages.later)}
+            </Button>
+          </ActionRow>
+        </ModalDialog.Footer>
+      </ModalDialog>
+    </>
   );
 };
 
 FeedbackModal.propTypes = {
   loadFeedbackRequests: PropTypes.func,
   submitFeedback: PropTypes.func,
+  renderTrigger: PropTypes.func,
 };
 
 export default FeedbackModal;

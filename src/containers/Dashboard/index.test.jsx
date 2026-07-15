@@ -20,7 +20,6 @@ jest.mock('./hooks', () => ({
 
 jest.mock('plugin-slots/DashboardModalSlot', () => jest.fn(() => <div>DashboardModalSlot</div>));
 jest.mock('containers/CoursesPanel', () => jest.fn(() => <div>CoursesPanel</div>));
-jest.mock('containers/FeedbackModal', () => jest.fn(() => <div>FeedbackModal</div>));
 jest.mock('./LoadingView', () => jest.fn(() => <div>LoadingView</div>));
 jest.mock('containers/SelectSessionModal', () => jest.fn(() => <div>SelectSessionModal</div>));
 jest.mock('./DashboardLayout', () => jest.fn(() => <div>DashboardLayout</div>));
@@ -52,11 +51,6 @@ describe('Dashboard', () => {
         createWrapper({ initIsPending: false });
         const dashboardModalSlot = screen.getByText('DashboardModalSlot');
         expect(dashboardModalSlot).toBeInTheDocument();
-      });
-      it('should render FeedbackModal', () => {
-        createWrapper({ initIsPending: false });
-        const feedbackModal = screen.getByText('FeedbackModal');
-        expect(feedbackModal).toBeInTheDocument();
       });
       it('should render SelectSessionModal', () => {
         createWrapper({ initIsPending: false });

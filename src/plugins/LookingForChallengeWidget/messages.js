@@ -11,6 +11,11 @@ const messages = defineMessages({
     defaultMessage: 'Find a course {arrow}',
     description: 'Button to explore more courses',
   },
+  feedbackButton: {
+    id: 'WidgetSidebar.feedbackButton',
+    defaultMessage: 'Open feedback',
+    description: 'Button to open learner feedback modal',
+  },
 });
 
 export default messages;

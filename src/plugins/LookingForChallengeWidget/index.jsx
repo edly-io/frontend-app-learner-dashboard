@@ -29,7 +29,7 @@ export const LookingForChallengeWidget = () => {
         <h4>
           {formatMessage(messages.lookingForChallengePrompt)}
         </h4>
-        <h5>
+        <h5 className="mb-0">
           <Hyperlink
             variant="brand"
             destination={hyperlinkDestination}
