@@ -6,7 +6,7 @@ import {
   MarketingModal,
   ModalDialog,
   PageBanner,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import confirmEmailSVG from 'assets/confirm-email.svg';
@@ -64,7 +64,7 @@ export const ConfirmEmailBanner = () => {
           </Button>
         )}
       >
-        <h1 className="text-center p-3">{formatMessage(messages.confirmEmailModalHeader)}</h1>
+        <h2 className="text-center p-3 h1">{formatMessage(messages.confirmEmailModalHeader)}</h2>
         <p className="text-center">{formatMessage(messages.confirmEmailModalBody)}</p>
       </MarketingModal>
     </>

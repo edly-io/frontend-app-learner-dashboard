@@ -1,7 +1,7 @@
 /* eslint-disable quotes */
-import { StrictDict } from 'utils';
+import { defineMessages } from '@edx/frontend-platform/i18n';
 
-export const messages = StrictDict({
+const messages = defineMessages({
   header: {
     id: 'learner-dash.relatedPrograms.header',
     description: 'Header for related settings modal',
@@ -10,7 +10,7 @@ export const messages = StrictDict({
   description: {
     id: 'learner-dash.relatedPrograms.description',
     description: 'Description for related settings modal',
-    defaultMessage: `Are you looking to expand your knowledge?  Enrolling in a Program lets you take a series of courses in the subject that you're interested in`,
+    defaultMessage: 'Are you looking to expand your knowledge?  Enrolling in a Program lets you take a series of courses in the subject that you\'re interested in',
   },
 });
 

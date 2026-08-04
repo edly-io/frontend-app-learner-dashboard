@@ -43,6 +43,7 @@ export const courseCard = StrictDict({
     (courseRun) => (courseRun === null ? {} : {
       endDate: module.loadDateVal(courseRun.endDate),
       startDate: module.loadDateVal(courseRun.startDate),
+      advertisedStart: courseRun.advertisedStart,
 
       courseId: courseRun.courseId,
       isArchived: courseRun.isArchived,
@@ -52,7 +53,6 @@ export const courseCard = StrictDict({
 
       homeUrl: courseRun.homeUrl,
       marketingUrl: courseRun.marketingUrl,
-      upgradeUrl: courseRun.upgradeUrl,
 
       progressUrl: baseAppUrl(courseRun.progressUrl),
       resumeUrl: baseAppUrl(courseRun.resumeUrl), // resume will route this to learning mfe.
@@ -99,6 +99,7 @@ export const courseCard = StrictDict({
         isEmailEnabled: enrollment.isEmailEnabled,
         hasOptedOutOfEmail: enrollment.hasOptedOutOfEmail,
         mode: enrollment.mode,
+        hasPaid: enrollment.hasPaid,
         isExecEd2UCourse: EXECUTIVE_EDUCATION_COURSE_MODES.includes(enrollment.mode),
       };
     },

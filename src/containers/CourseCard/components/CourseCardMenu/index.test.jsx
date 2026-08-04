@@ -1,25 +1,23 @@
 import { when } from 'jest-when';
 
-import { Dropdown } from '@edx/paragon';
-import { shallow } from '@edx/react-unit-test-utils';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 
-import EmailSettingsModal from 'containers/EmailSettingsModal';
-import UnenrollConfirmModal from 'containers/UnenrollConfirmModal';
 import { reduxHooks } from 'hooks';
-import SocialShareMenu from './SocialShareMenu';
 import * as hooks from './hooks';
-import CourseCardMenu, { testIds } from '.';
+import CourseCardMenu from '.';
+import messages from './messages';
 
-jest.mock('@edx/frontend-platform/i18n', () => ({
-  useIntl: jest.fn().mockReturnValue({
-    formatMessage: jest.requireActual('@edx/react-unit-test-utils').formatMessage,
-  }),
-}));
 jest.mock('hooks', () => ({
-  reduxHooks: { useMasqueradeData: jest.fn(), useCardEnrollmentData: jest.fn() },
+  reduxHooks: {
+    useMasqueradeData: jest.fn(),
+    useCardEnrollmentData: jest.fn(),
+  },
 }));
-jest.mock('./SocialShareMenu', () => 'SocialShareMenu');
+jest.mock('./SocialShareMenu', () => jest.fn(() => <div>SocialShareMenu</div>));
+jest.mock('containers/EmailSettingsModal', () => jest.fn(() => <div>EmailSettingsModal</div>));
+jest.mock('containers/UnenrollConfirmModal', () => jest.fn(() => <div>UnenrollConfirmModal</div>));
 jest.mock('./hooks', () => ({
   useEmailSettings: jest.fn(),
   useUnenrollData: jest.fn(),
@@ -43,13 +41,11 @@ const unenrollData = {
   hide: jest.fn().mockName('unenrollHide'),
 };
 
-let el;
-
 const mockHook = (fn, returnValue, options = {}) => {
   if (options.isCardHook) {
-    when(fn).calledWith(props.cardId).mockReturnValueOnce(returnValue);
+    when(fn).calledWith(props.cardId).mockReturnValue(returnValue);
   } else {
-    when(fn).calledWith().mockReturnValueOnce(returnValue);
+    when(fn).calledWith().mockReturnValue(returnValue);
   }
 };
 
@@ -70,6 +66,7 @@ const mockHooks = (returnVals = {}) => {
     {
       shouldShowUnenrollItem: !!returnVals.shouldShowUnenrollItem,
       shouldShowDropdown: !!returnVals.shouldShowDropdown,
+      isPaidCourseMode: !!returnVals.isPaidCourseMode,
     },
     { isCardHook: true },
   );
@@ -81,18 +78,13 @@ const mockHooks = (returnVals = {}) => {
   );
 };
 
-const render = () => {
-  el = shallow(<CourseCardMenu {...props} />);
-};
+const renderComponent = () => render(<IntlProvider locale="en"><CourseCardMenu {...props} /></IntlProvider>);
 
 describe('CourseCardMenu', () => {
-  describe('behavior', () => {
+  describe('hooks', () => {
     beforeEach(() => {
       mockHooks();
-      render();
-    });
-    it('initializes intl hook', () => {
-      expect(useIntl).toHaveBeenCalledWith();
+      renderComponent();
     });
     it('initializes local hooks', () => {
       when(hooks.useEmailSettings).expectCalledWith();
@@ -108,47 +100,30 @@ describe('CourseCardMenu', () => {
   describe('render', () => {
     it('renders null if showDropdown is false', () => {
       mockHooks();
-      render();
-      expect(el.isEmptyRender()).toEqual(true);
+      renderComponent();
+      const dropdown = screen.queryByRole('button', { name: messages.dropdownAlt.defaultMessage });
+      expect(dropdown).toBeNull();
     });
-    const testHandleToggle = () => {
-      it('displays Dropdown with onToggle=handleToggleDropdown', () => {
-        expect(el.instance.findByType(Dropdown)[0].props.onToggle).toEqual(handleToggleDropdown);
-      });
-    };
-    const testUnenrollConfirmModal = () => {
-      it('displays UnenrollConfirmModal with cardId and unenrollModal data', () => {
-        const modal = el.instance.findByType(UnenrollConfirmModal)[0];
-        expect(modal.props.show).toEqual(unenrollData.isVisible);
-        expect(modal.props.closeModal).toEqual(unenrollData.hide);
-        expect(modal.props.cardId).toEqual(props.cardId);
-      });
-    };
-    const testSocialShareMenu = () => {
-      it('displays SocialShareMenu with cardID and emailSettings', () => {
-        const menu = el.instance.findByType(SocialShareMenu)[0];
-        expect(menu.props.cardId).toEqual(props.cardId);
-        expect(menu.props.emailSettings).toEqual(emailSettings);
-      });
-    };
     describe('show dropdown', () => {
       describe('hide unenroll item and disable email', () => {
-        beforeEach(() => {
-          mockHooks({ shouldShowDropdown: true });
-          render();
+        it('displays Dropdown and renders SocialShareMenu and UnenrollConfirmModal', async () => {
+          mockHooks({
+            shouldShowDropdown: true,
+          });
+          renderComponent();
+          const user = userEvent.setup();
+          const dropdown = screen.getByRole('button', { name: messages.dropdownAlt.defaultMessage });
+          expect(dropdown).toBeInTheDocument();
+          await user.click(dropdown);
+          const unenrollOption = screen.queryByRole('button', { name: messages.unenroll.defaultMessage });
+          expect(unenrollOption).toBeNull();
+          const socialShareMenu = screen.getByText('SocialShareMenu');
+          expect(socialShareMenu).toBeInTheDocument();
+          const unenrollConfirmModal = screen.getByText('UnenrollConfirmModal');
+          expect(unenrollConfirmModal).toBeInTheDocument();
+          const emailSettingsModal = screen.queryByText('EmailSettingsModal');
+          expect(emailSettingsModal).toBeNull();
         });
-        test('snapshot', () => {
-          expect(el.snapshot).toMatchSnapshot();
-        });
-        testHandleToggle();
-        testSocialShareMenu();
-        it('does not render unenroll modal toggle', () => {
-          expect(el.instance.findByTestId(testIds.unenrollModalToggle).length).toEqual(0);
-        });
-        it('does not render EmailSettingsModal', () => {
-          expect(el.instance.findByType(EmailSettingsModal).length).toEqual(0);
-        });
-        testUnenrollConfirmModal();
       });
       describe('show unenroll and enable email', () => {
         const hookProps = {
@@ -156,56 +131,90 @@ describe('CourseCardMenu', () => {
           isEmailEnabled: true,
           shouldShowUnenrollItem: true,
         };
-        beforeEach(() => {
-          mockHooks(hookProps);
-          render();
-        });
-        test('snapshot', () => {
-          expect(el.snapshot).toMatchSnapshot();
-        });
-        testHandleToggle();
-        testSocialShareMenu();
         describe('unenroll modal toggle', () => {
-          let toggle;
           describe('not masquerading', () => {
-            beforeEach(() => {
+            it('renders all components', async () => {
               mockHooks(hookProps);
-              render();
-              [toggle] = el.instance.findByTestId(testIds.unenrollModalToggle);
-            });
-            it('renders unenroll modal toggle', () => {
-              expect(el.instance.findByTestId(testIds.unenrollModalToggle).length).toEqual(1);
-            });
-            test('onClick from unenroll modal hook', () => {
-              expect(toggle.props.onClick).toEqual(unenrollData.show);
-            });
-            test('disabled', () => {
-              expect(toggle.props.disabled).toEqual(false);
+              renderComponent();
+
+              const user = userEvent.setup();
+              const dropdown = screen.getByRole('button', { name: messages.dropdownAlt.defaultMessage });
+              expect(dropdown).toBeInTheDocument();
+              await user.click(dropdown);
+
+              const unenrollOption = screen.getByRole('button', { name: messages.unenroll.defaultMessage });
+              expect(unenrollOption).toBeInTheDocument();
+              const socialShareMenu = screen.getByText('SocialShareMenu');
+              expect(socialShareMenu).toBeInTheDocument();
+              const unenrollConfirmModal = screen.getByText('UnenrollConfirmModal');
+              expect(unenrollConfirmModal).toBeInTheDocument();
+              const emailSettingsModal = screen.getByText('EmailSettingsModal');
+              expect(emailSettingsModal).toBeInTheDocument();
             });
           });
           describe('masquerading', () => {
-            beforeEach(() => {
+            it('renders but unenroll is disabled, with no paid-course tooltip', async () => {
               mockHooks({ ...hookProps, isMasquerading: true });
-              render();
-              [toggle] = el.instance.findByTestId(testIds.unenrollModalToggle);
-            });
-            it('renders', () => {
-              expect(el.instance.findByTestId(testIds.unenrollModalToggle).length).toEqual(1);
-            });
-            test('onClick from unenroll modal hook', () => {
-              expect(toggle.props.onClick).toEqual(unenrollData.show);
-            });
-            test('disabled', () => {
-              expect(toggle.props.disabled).toEqual(true);
+              renderComponent();
+
+              const user = userEvent.setup();
+              const dropdown = screen.getByRole('button', { name: messages.dropdownAlt.defaultMessage });
+              expect(dropdown).toBeInTheDocument();
+              await user.click(dropdown);
+
+              const unenrollOption = screen.getByRole('button', { name: messages.unenroll.defaultMessage });
+              expect(unenrollOption).toBeInTheDocument();
+              expect(unenrollOption).toHaveAttribute('aria-disabled', 'true');
+              const socialShareMenu = screen.getByText('SocialShareMenu');
+              expect(socialShareMenu).toBeInTheDocument();
+              const unenrollConfirmModal = screen.getByText('UnenrollConfirmModal');
+              expect(unenrollConfirmModal).toBeInTheDocument();
+              const emailSettingsModal = screen.getByText('EmailSettingsModal');
+              expect(emailSettingsModal).toBeInTheDocument();
+
+              await user.hover(unenrollOption);
+              expect(
+                screen.queryByText(messages.unenrollPaidCourseTooltip.defaultMessage),
+              ).toBeNull();
             });
           });
-        });
-        testUnenrollConfirmModal();
-        it('displays EmaiSettingsModal with cardId and emailSettingsModal data', () => {
-          const modal = el.instance.findByType(EmailSettingsModal)[0];
-          expect(modal.props.show).toEqual(emailSettings.isVisible);
-          expect(modal.props.closeModal).toEqual(emailSettings.hide);
-          expect(modal.props.cardId).toEqual(props.cardId);
+          describe('paid course mode', () => {
+            it('renders unenroll disabled with a tooltip on hover', async () => {
+              mockHooks({ ...hookProps, isPaidCourseMode: true });
+              renderComponent();
+
+              const user = userEvent.setup();
+              const dropdown = screen.getByRole('button', { name: messages.dropdownAlt.defaultMessage });
+              await user.click(dropdown);
+
+              const unenrollOption = screen.getByRole('button', { name: messages.unenroll.defaultMessage });
+              expect(unenrollOption).toBeInTheDocument();
+              expect(unenrollOption).toHaveAttribute('aria-disabled', 'true');
+
+              await user.hover(unenrollOption);
+              expect(
+                await screen.findByText(messages.unenrollPaidCourseTooltip.defaultMessage),
+              ).toBeInTheDocument();
+            });
+          });
+          describe('free/audit course mode', () => {
+            it('renders unenroll enabled with no tooltip on hover', async () => {
+              mockHooks(hookProps);
+              renderComponent();
+
+              const user = userEvent.setup();
+              const dropdown = screen.getByRole('button', { name: messages.dropdownAlt.defaultMessage });
+              await user.click(dropdown);
+
+              const unenrollOption = screen.getByRole('button', { name: messages.unenroll.defaultMessage });
+              expect(unenrollOption).not.toHaveAttribute('aria-disabled', 'true');
+
+              await user.hover(unenrollOption);
+              expect(
+                screen.queryByText(messages.unenrollPaidCourseTooltip.defaultMessage),
+              ).toBeNull();
+            });
+          });
         });
       });
     });

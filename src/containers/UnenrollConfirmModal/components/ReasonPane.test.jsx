@@ -1,7 +1,9 @@
-import React from 'react';
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import { formatMessage } from 'testUtils';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { ReasonPane } from './ReasonPane';
+import messages from './messages';
 
 describe('UnenrollConfirmModal ReasonPane', () => {
   const props = {
@@ -17,10 +19,25 @@ describe('UnenrollConfirmModal ReasonPane', () => {
       hasReason: true,
     },
   };
-  test('snapshot', () => {
-    expect(shallow(<ReasonPane {...props} />)).toMatchSnapshot();
+  it('render heading', () => {
+    render(<IntlProvider locale="en"><ReasonPane {...props} /></IntlProvider>);
+    const heading = screen.getByText(formatMessage(messages.reasonHeading));
+    expect(heading).toBeInTheDocument();
   });
-  test('snapshot: no reason provided', () => {
-    expect(shallow(<ReasonPane {...props} hasReason={false} />)).toMatchSnapshot();
+  it('render options', () => {
+    render(<IntlProvider locale="en"><ReasonPane {...props} /></IntlProvider>);
+    const radioButtons = screen.getAllByRole('radio');
+    expect(radioButtons).toBeDefined();
+    expect(radioButtons.length).toBe(11);
+  });
+  it('render cancel button', () => {
+    render(<IntlProvider locale="en"><ReasonPane {...props} hasReason={false} /></IntlProvider>);
+    const skipButton = screen.getByRole('button', { name: formatMessage(messages.confirmCancel) });
+    expect(skipButton).toBeInTheDocument();
+  });
+  it('render submit button', () => {
+    render(<IntlProvider locale="en"><ReasonPane {...props} hasReason={false} /></IntlProvider>);
+    const submitButton = screen.getByRole('button', { name: formatMessage(messages.reasonSubmit) });
+    expect(submitButton).toBeInTheDocument();
   });
 });

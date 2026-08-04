@@ -34,26 +34,20 @@ export const deleteEntitlementEnrollment = ({ uuid, isRefundable }) => client()
   );
 
 export const updateEmailSettings = ({ courseId, enable }) => post(
-  urls.updateEmailSettings,
+  urls.updateEmailSettings(),
   { [apiKeys.courseId]: courseId, ...(enable && enableEmailsAction) },
 );
 
 export const unenrollFromCourse = ({ courseId }) => post(
-  urls.courseUnenroll,
+  urls.courseUnenroll(),
   { [apiKeys.courseId]: courseId, ...unenrollmentAction },
 );
 
-export const logEvent = ({ eventName, data, courseId }) => post(urls.event, {
+export const logEvent = ({ eventName, data, courseId }) => post(urls.event(), {
   courserun_key: courseId,
   event_type: eventName,
   page: window.location.href,
   event: JSON.stringify(data),
-});
-
-export const logUpgrade = ({ courseId }) => module.logEvent({
-  eventName: eventNames.upgradeButtonClickedEnrollment,
-  courseId,
-  data: { location: 'learner-dashboard' },
 });
 
 export const logShare = ({ courseId, site }) => module.logEvent({
@@ -78,7 +72,6 @@ export default {
   updateEntitlementEnrollment,
   deleteEntitlementEnrollment,
   logEvent,
-  logUpgrade,
   logShare,
   createCreditRequest,
 };

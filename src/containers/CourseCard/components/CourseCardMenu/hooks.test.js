@@ -1,7 +1,6 @@
-import { mockUseKeyedState } from '@edx/react-unit-test-utils';
-
 import { reduxHooks } from 'hooks';
 import track from 'tracking';
+import { MockUseState } from 'testUtils';
 
 import * as hooks from './hooks';
 
@@ -19,7 +18,7 @@ reduxHooks.useTrackCourseEvent.mockReturnValue(trackCourseEvent);
 const cardId = 'test-card-id';
 let out;
 
-const state = mockUseKeyedState(hooks.stateKeys);
+const state = new MockUseState(hooks);
 
 describe('CourseCardMenu hooks', () => {
   beforeEach(() => {
@@ -28,7 +27,6 @@ describe('CourseCardMenu hooks', () => {
   });
   describe('useUnenrollData', () => {
     beforeEach(() => {
-      state.mockVals({ isUnenrollConfirmVisible: true });
       out = hooks.useUnenrollData();
     });
     describe('behavior', () => {
@@ -37,9 +35,6 @@ describe('CourseCardMenu hooks', () => {
       });
     });
     describe('output', () => {
-      test('state is loaded from current state value', () => {
-        expect(out.isVisible).toEqual(true);
-      });
       test('show sets state value to true', () => {
         out.show();
         expect(state.setState.isUnenrollConfirmVisible).toHaveBeenCalledWith(true);
@@ -53,7 +48,6 @@ describe('CourseCardMenu hooks', () => {
 
   describe('useEmailSettings', () => {
     beforeEach(() => {
-      state.mockVals({ isEmailSettingsVisible: true });
       out = hooks.useEmailSettings();
     });
     describe('behavior', () => {
@@ -62,9 +56,6 @@ describe('CourseCardMenu hooks', () => {
       });
     });
     describe('output', () => {
-      test('state is loaded from current state value', () => {
-        expect(out.isVisible).toEqual(state.values.isEmailSettingsVisible);
-      });
       test('show sets state value to true', () => {
         out.show();
         expect(state.setState.isEmailSettingsVisible).toHaveBeenCalledWith(true);
@@ -105,6 +96,7 @@ describe('CourseCardMenu hooks', () => {
       reduxHooks.useCardEnrollmentData.mockReturnValueOnce({
         isEnrolled: !!returnVals.isEnrolled,
         isEmailEnabled: !!returnVals.isEmailEnabled,
+        hasPaid: returnVals.hasPaid,
       });
       reduxHooks.useCardCertificateData.mockReturnValueOnce({
         isEarned: !!returnVals.isEarned,
@@ -147,6 +139,21 @@ describe('CourseCardMenu hooks', () => {
       it('returns true if enrolled and not earned', () => {
         mockReduxHooks({ isEnrolled: true });
         expect(hooks.useOptionVisibility(cardId).shouldShowDropdown).toEqual(true);
+      });
+    });
+
+    describe('isPaidCourseMode', () => {
+      it('returns true when the enrollment has an ecommerce order (hasPaid)', () => {
+        mockReduxHooks({ hasPaid: true });
+        expect(hooks.useOptionVisibility(cardId).isPaidCourseMode).toEqual(true);
+      });
+      it('returns false for a verified enrollment with no order (financial assistance/coupon/staff-granted)', () => {
+        mockReduxHooks({ hasPaid: false });
+        expect(hooks.useOptionVisibility(cardId).isPaidCourseMode).toEqual(false);
+      });
+      it('returns false when hasPaid is not set', () => {
+        mockReduxHooks();
+        expect(hooks.useOptionVisibility(cardId).isPaidCourseMode).toEqual(false);
       });
     });
   });

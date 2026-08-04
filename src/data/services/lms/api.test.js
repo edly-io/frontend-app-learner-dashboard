@@ -77,7 +77,7 @@ describe('lms api methods', () => {
         expect(
           api.updateEmailSettings({ courseId, enable: false }),
         ).toEqual(
-          utils.post(urls.updateEmailSettings, { [apiKeys.courseId]: courseId }),
+          utils.post(urls.updateEmailSettings(), { [apiKeys.courseId]: courseId }),
         );
       });
     });
@@ -87,7 +87,7 @@ describe('lms api methods', () => {
           api.updateEmailSettings({ courseId, enable: true }),
         ).toEqual(
           utils.post(
-            urls.updateEmailSettings,
+            urls.updateEmailSettings(),
             { [apiKeys.courseId]: courseId, ...enableEmailsAction },
           ),
         );
@@ -100,7 +100,7 @@ describe('lms api methods', () => {
         api.unenrollFromCourse({ courseId }),
       ).toEqual(
         utils.post(
-          urls.courseUnenroll,
+          urls.courseUnenroll(),
           { [apiKeys.courseId]: courseId, ...unenrollmentAction },
         ),
       );
@@ -116,7 +116,7 @@ describe('lms api methods', () => {
         expect(
           api.logEvent({ courseId, eventName, data }),
         ).toEqual(
-          utils.post(urls.event, {
+          utils.post(urls.event(), {
             courserun_key: courseId,
             event_type: eventName,
             page: href,
@@ -129,13 +129,6 @@ describe('lms api methods', () => {
       const logEvent = (args) => ({ logEvent: args });
       beforeEach(() => {
         jest.spyOn(api, moduleKeys.logEvent).mockImplementation(logEvent);
-      });
-      test('logUpgrade sends enrollment upgrade click event with learner dashboard location', () => {
-        expect(api.logUpgrade({ courseId })).toEqual(logEvent({
-          eventName: eventNames.upgradeButtonClickedEnrollment,
-          courseId,
-          data: { location: 'learner-dashboard' },
-        }));
       });
       test('logShare sends share clicke vent with course id, side and location', () => {
         const site = 'test-site';

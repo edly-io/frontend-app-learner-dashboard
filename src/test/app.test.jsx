@@ -9,7 +9,6 @@ import {
   within,
   prettyDOM,
 } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import {
   initialize,
   mergeConfig,
@@ -33,18 +32,13 @@ import App from 'App';
 import Inspector from './inspector';
 import appMessages from './messages';
 
-jest.unmock('@edx/paragon');
-jest.unmock('@edx/paragon/icons');
-jest.unmock('@edx/frontend-platform/i18n');
 jest.unmock('@edx/frontend-component-footer');
-jest.unmock('react');
+
 jest.unmock('react-redux');
 jest.unmock('reselect');
 jest.unmock('hooks');
 
-jest.mock('containers/WidgetContainers/LoadedSidebar', () => jest.fn(() => 'loaded-widget-sidebar'));
-jest.mock('containers/WidgetContainers/NoCoursesSidebar', () => jest.fn(() => 'no-courses-widget-sidebar'));
-jest.mock('containers/WidgetContainers/WidgetFooter', () => 'product-recommendations-footer');
+jest.mock('plugin-slots/WidgetSidebarSlot', () => jest.fn(() => 'widget-sidebar'));
 jest.mock('components/NoticesWrapper', () => 'notices-wrapper');
 
 jest.mock('@edx/frontend-platform', () => ({
@@ -59,10 +53,6 @@ jest.mock('@edx/frontend-platform/analytics', () => ({
 jest.mock('@edx/frontend-platform/auth', () => ({
   getAuthenticatedHttpClient: jest.fn(),
   getLoginRedirectUrl: jest.fn(),
-}));
-
-jest.mock('ExperimentContext', () => ({
-  ExperimentProvider: 'div'
 }));
 
 jest.mock('@edx/frontend-enterprise-hotjar', () => ({

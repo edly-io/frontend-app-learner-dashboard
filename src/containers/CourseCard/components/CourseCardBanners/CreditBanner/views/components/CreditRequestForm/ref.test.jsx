@@ -4,9 +4,6 @@ import { render } from '@testing-library/react';
 import useCreditRequestFormData from './hooks';
 import CreditRequestForm from '.';
 
-jest.unmock('@edx/paragon');
-jest.unmock('react');
-
 jest.mock('./hooks', () => ({
   __esModule: true,
   default: jest.fn(),

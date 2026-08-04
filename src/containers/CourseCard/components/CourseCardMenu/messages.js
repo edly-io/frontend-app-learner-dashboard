@@ -1,6 +1,6 @@
-import { StrictDict } from 'utils';
+import { defineMessages } from '@edx/frontend-platform/i18n';
 
-export const messages = StrictDict({
+const messages = defineMessages({
   unenroll: {
     id: 'learner-dash.courseCardMenu.unenroll',
     description: 'Course unenroll menu button',
@@ -15,6 +15,11 @@ export const messages = StrictDict({
     id: 'learner-dash.courseCardMenu.emailSettings',
     description: 'Course email settings menu button',
     defaultMessage: 'Email settings',
+  },
+  unenrollPaidCourseTooltip: {
+    id: 'learner-dash.courseCardMenu.unenrollPaidCourseTooltip',
+    description: 'Tooltip shown when hovering a disabled unenroll option for a paid course mode',
+    defaultMessage: 'You cannot unenroll a paid course',
   },
   shareToFacebook: {
     id: 'learner-dash.courseCardMenu.shareToFacebook',

@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Hyperlink } from '@edx/paragon';
+import { Hyperlink } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { utilHooks, reduxHooks } from 'hooks';
@@ -12,7 +12,6 @@ export const CourseBanner = ({ cardId }) => {
   const {
     isVerified,
     isAuditAccessExpired,
-    canUpgrade,
     coursewareAccess = {},
   } = reduxHooks.useCardEnrollmentData(cardId);
   const courseRun = reduxHooks.useCardCourseRunData(cardId);
@@ -26,13 +25,7 @@ export const CourseBanner = ({ cardId }) => {
   return (
     <>
       {isAuditAccessExpired
-        && (canUpgrade ? (
-          <Banner>
-            {formatMessage(messages.auditAccessExpired)}
-            {'  '}
-            {formatMessage(messages.upgradeToAccess)}
-          </Banner>
-        ) : (
+        && (
           <Banner>
             {formatMessage(messages.auditAccessExpired)}
             {'  '}
@@ -40,17 +33,7 @@ export const CourseBanner = ({ cardId }) => {
               {formatMessage(messages.findAnotherCourse)}
             </Hyperlink>
           </Banner>
-        ))}
-
-      {courseRun.isActive && !canUpgrade && (
-        <Banner>
-          {formatMessage(messages.upgradeDeadlinePassed)}
-          {'  '}
-          <Hyperlink isInline destination={courseRun.marketingUrl || ''}>
-            {formatMessage(messages.exploreCourseDetails)}
-          </Hyperlink>
-        </Banner>
-      )}
+        )}
 
       {(!isStaff && isTooEarly && courseRun.startDate) && (
         <Banner>
@@ -59,6 +42,7 @@ export const CourseBanner = ({ cardId }) => {
           })}
         </Banner>
       )}
+
       {(!isStaff && hasUnmetPrerequisites) && (
         <Banner>{formatMessage(messages.prerequisitesNotMet)}</Banner>
       )}

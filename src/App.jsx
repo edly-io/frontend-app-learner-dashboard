@@ -6,8 +6,8 @@ import { logError } from '@edx/frontend-platform/logging';
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 
 import { ErrorPage, AppContext } from '@edx/frontend-platform/react';
-import Footer from '@edx/frontend-component-footer';
-import { Alert } from '@edx/paragon';
+import { FooterSlot } from '@edx/frontend-component-footer';
+import { Alert } from '@openedx/paragon';
 
 import { RequestKeys } from 'data/constants/requests';
 import store from 'data/store';
@@ -17,14 +17,12 @@ import {
 } from 'data/redux';
 import { reduxHooks } from 'hooks';
 import Dashboard from 'containers/Dashboard';
-import ZendeskFab from 'components/ZendeskFab';
-import { ExperimentProvider } from 'ExperimentContext';
 
 import track from 'tracking';
 
 import fakeData from 'data/services/lms/fakeData/courses';
 
-import AppWrapper from 'containers/WidgetContainers/AppWrapper';
+import AppWrapper from 'containers/AppWrapper';
 import LearnerDashboardHeader from 'containers/LearnerDashboardHeader';
 
 import { getConfig } from '@edx/frontend-platform';
@@ -41,19 +39,6 @@ export const App = () => {
   const hasNetworkFailure = isFailed.initialize || isFailed.refreshList;
   const { supportEmail } = reduxHooks.usePlatformSettingsData();
   const loadData = reduxHooks.useLoadData();
-
-  const optimizelyScript = () => {
-    if (getConfig().OPTIMIZELY_URL) {
-      return <script src={getConfig().OPTIMIZELY_URL} />;
-    } if (getConfig().OPTIMIZELY_PROJECT_ID) {
-      return (
-        <script
-          src={`${getConfig().MARKETING_SITE_BASE_URL}/optimizelyjs/${getConfig().OPTIMIZELY_PROJECT_ID}.js`}
-        />
-      );
-    }
-    return null;
-  };
 
   React.useEffect(() => {
     if (authenticatedUser?.administrator || getConfig().NODE_ENV === 'development') {
@@ -91,26 +76,22 @@ export const App = () => {
       <Helmet>
         <title>{formatMessage(messages.pageTitle)}</title>
         <link rel="shortcut icon" href={getConfig().FAVICON_URL} type="image/x-icon" />
-        {optimizelyScript()}
       </Helmet>
       <div>
         <AppWrapper>
           <LearnerDashboardHeader />
-          <main>
+          <main id="main">
             {hasNetworkFailure
               ? (
                 <Alert variant="danger">
                   <ErrorPage message={formatMessage(messages.errorMessage, { supportEmail })} />
                 </Alert>
               ) : (
-                <ExperimentProvider>
-                  <Dashboard />
-                </ExperimentProvider>
+                <Dashboard />
               )}
           </main>
         </AppWrapper>
-        <Footer logo={getConfig().LOGO_POWERED_BY_OPEN_EDX_URL_SVG} />
-        <ZendeskFab />
+        <FooterSlot />
       </div>
     </>
   );

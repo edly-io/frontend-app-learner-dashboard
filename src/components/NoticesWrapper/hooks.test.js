@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { MockUseState } from 'testUtils';
+import { MockUseState, formatMessage } from 'testUtils';
 
 import { getConfig } from '@edx/frontend-platform';
 import { getNotices } from './api';
@@ -8,6 +8,22 @@ import * as hooks from './hooks';
 
 jest.mock('@edx/frontend-platform', () => ({ getConfig: jest.fn() }));
 jest.mock('./api', () => ({ getNotices: jest.fn() }));
+
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useEffect: jest.fn((cb, prereqs) => ({ useEffect: { cb, prereqs } })),
+  useContext: jest.fn(context => context),
+}));
+
+jest.mock('@edx/frontend-platform/i18n', () => {
+  const { formatMessage: fn } = jest.requireActual('testUtils');
+  return {
+    ...jest.requireActual('@edx/frontend-platform/i18n'),
+    useIntl: () => ({
+      formatMessage: fn,
+    }),
+  };
+});
 
 getConfig.mockReturnValue({ ENABLE_NOTICES: true });
 const state = new MockUseState(hooks);
@@ -34,7 +50,7 @@ describe('NoticesWrapper hooks', () => {
           getConfig.mockReturnValueOnce({ ENABLE_NOTICES: false });
           hooks.useNoticesWrapperData();
           const [cb, prereqs] = React.useEffect.mock.calls[0];
-          expect(prereqs).toEqual([state.setState.isRedirected]);
+          expect(prereqs).toEqual([state.setState.isRedirected, formatMessage]);
           cb();
           expect(getNotices).not.toHaveBeenCalled();
         });
@@ -43,7 +59,7 @@ describe('NoticesWrapper hooks', () => {
             hooks.useNoticesWrapperData();
             expect(React.useEffect).toHaveBeenCalled();
             const [cb, prereqs] = React.useEffect.mock.calls[0];
-            expect(prereqs).toEqual([state.setState.isRedirected]);
+            expect(prereqs).toEqual([state.setState.isRedirected, formatMessage]);
             cb();
             expect(getNotices).toHaveBeenCalled();
             const { onLoad } = getNotices.mock.calls[0][0];
@@ -59,7 +75,7 @@ describe('NoticesWrapper hooks', () => {
             window.location = { replace: jest.fn(), href: 'test-old-href' };
             hooks.useNoticesWrapperData();
             const [cb, prereqs] = React.useEffect.mock.calls[0];
-            expect(prereqs).toEqual([state.setState.isRedirected]);
+            expect(prereqs).toEqual([state.setState.isRedirected, formatMessage]);
             cb();
             expect(getNotices).toHaveBeenCalled();
             const { onLoad } = getNotices.mock.calls[0][0];

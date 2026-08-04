@@ -1,8 +1,8 @@
-import React from 'react';
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { reduxHooks } from 'hooks';
-import { formatMessage } from 'testUtils';
 import track from 'tracking';
 
 import messages from './messages';
@@ -14,15 +14,12 @@ jest.mock('hooks', () => ({
     useCardCourseRunData: jest.fn(),
   },
 }));
-jest.mock('./components/CreditContent', () => 'CreditContent');
+
 jest.mock('tracking', () => ({
   credit: {
-    purchase: (...args) => ({ trackCredit: args }),
+    purchase: jest.fn(),
   },
 }));
-
-let el;
-let component;
 
 const cardId = 'test-card-id';
 const courseId = 'test-course-id';
@@ -32,50 +29,45 @@ const credit = {
 reduxHooks.useCardCreditData.mockReturnValue(credit);
 reduxHooks.useCardCourseRunData.mockReturnValue({ courseId });
 
-const render = () => {
-  el = shallow(<EligibleContent cardId={cardId} />);
-};
-const loadComponent = () => {
-  component = el.find('CreditContent');
-};
+const renderEligibleContent = () => render(<IntlProvider locale="en" messages={{}}><EligibleContent cardId={cardId} /></IntlProvider>);
+
 describe('EligibleContent component', () => {
-  beforeEach(() => {
-    render();
-  });
-  describe('behavior', () => {
+  describe('hooks', () => {
     it('initializes credit data with cardId', () => {
+      renderEligibleContent();
       expect(reduxHooks.useCardCreditData).toHaveBeenCalledWith(cardId);
     });
     it('initializes course run data with cardId', () => {
+      renderEligibleContent();
       expect(reduxHooks.useCardCourseRunData).toHaveBeenCalledWith(cardId);
     });
   });
-  describe('render', () => {
+  describe('behavior', () => {
     describe('rendered CreditContent component', () => {
-      beforeEach(() => {
-        loadComponent();
+      it('action message is formatted getCredit message', () => {
+        renderEligibleContent();
+        const button = screen.getByRole('button', { name: messages.getCredit.defaultMessage });
+        expect(button).toBeInTheDocument();
       });
-      test('action.onClick sends credit purchase track event', () => {
-        expect(component.props().action.onClick).toEqual(
-          track.credit.purchase(courseId),
-        );
+      it('onClick sends credit purchase track event', async () => {
+        const user = userEvent.setup();
+        renderEligibleContent();
+        const button = screen.getByRole('button', { name: messages.getCredit.defaultMessage });
+        await user.click(button);
+        expect(track.credit.purchase).toHaveBeenCalledWith(courseId);
       });
-      test('action.message is formatted getCredit message', () => {
-        expect(component.props().action.message).toEqual(formatMessage(messages.getCredit));
+      it('message is formatted eligible message if provider', () => {
+        renderEligibleContent();
+        const eligibleMessage = screen.getByTestId('credit-msg');
+        expect(eligibleMessage).toBeInTheDocument();
+        expect(eligibleMessage).toHaveTextContent(credit.providerName);
       });
-      test('message is formatted eligible message if no provider', () => {
-        reduxHooks.useCardCreditData.mockReturnValueOnce({});
-        render();
-        loadComponent();
-        expect(component.props().message).toEqual(formatMessage(
-          messages.eligible,
-          { getCredit: (<b>{formatMessage(messages.getCredit)}</b>) },
-        ));
-      });
-      test('message is formatted eligible message if provider', () => {
-        expect(component.props().message).toEqual(
-          formatMessage(messages.eligibleFromProvider, { providerName: credit.providerName }),
-        );
+      it('message is formatted eligible message if no provider', () => {
+        reduxHooks.useCardCreditData.mockReturnValue({});
+        renderEligibleContent();
+        const eligibleMessage = screen.getByTestId('credit-msg');
+        expect(eligibleMessage).toBeInTheDocument();
+        expect(eligibleMessage).toHaveTextContent(messages.getCredit.defaultMessage);
       });
     });
   });

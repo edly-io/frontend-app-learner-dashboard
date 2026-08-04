@@ -9,6 +9,7 @@ const actions = redux.actions.app;
 
 /** Simple Selectors **/
 export const usePageNumber = () => useSelector(selectors.pageNumber);
+export const useFilters = () => useSelector(selectors.filters);
 export const useEmailConfirmationData = () => useSelector(selectors.emailConfirmation);
 export const useEnterpriseDashboardData = () => useSelector(selectors.enterpriseDashboard);
 export const usePlatformSettingsData = () => useSelector(selectors.platformSettings);
@@ -17,7 +18,6 @@ export const useSocialShareSettings = () => useSelector(selectors.socialShareSet
 
 /** global-level meta-selectors **/
 export const useHasCourses = () => useSelector(selectors.hasCourses);
-export const useHasAvailableDashboards = () => useSelector(selectors.hasAvailableDashboards);
 export const useCurrentCourseList = (opts) => useSelector(
   state => selectors.currentList(state, opts),
 );
@@ -75,6 +75,26 @@ export const useTrackCourseEvent = (tracker, cardId, ...args) => {
 export const useSetPageNumber = () => {
   const dispatch = useDispatch();
   return (value) => dispatch(actions.setPageNumber(value));
+};
+
+export const useSetFilters = () => {
+  const dispatch = useDispatch();
+  return (value) => dispatch(actions.setFilters(value));
+};
+
+export const useAddFilter = () => {
+  const dispatch = useDispatch();
+  return (value) => dispatch(actions.addFilter(value));
+};
+
+export const useRemoveFilter = () => {
+  const dispatch = useDispatch();
+  return (value) => dispatch(actions.removeFilter(value));
+};
+
+export const useClearFilters = () => {
+  const dispatch = useDispatch();
+  return (value) => dispatch(actions.clearFilters(value));
 };
 
 export const useLoadData = () => {

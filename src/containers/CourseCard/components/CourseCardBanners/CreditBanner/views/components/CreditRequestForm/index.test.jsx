@@ -1,5 +1,4 @@
-import React from 'react';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 
 import { keyStore } from 'utils';
 
@@ -11,7 +10,8 @@ jest.mock('./hooks', () => ({
   default: jest.fn(),
 }));
 
-const ref = 'test-ref';
+const ref = { current: { click: jest.fn() }, useRef: jest.fn() };
+
 const requestData = {
   url: 'test-request-data-url',
   parameters: {
@@ -25,40 +25,41 @@ const paramKeys = keyStore(requestData.parameters);
 
 useCreditRequestFormData.mockReturnValue({ ref });
 
-let el;
-const shallowRender = (data) => { el = shallow(<CreditRequestForm requestData={data} />); };
+const renderForm = (data) => render(<CreditRequestForm requestData={data} />);
 describe('CreditRequestForm component', () => {
-  describe('behavior', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  describe('hooks', () => {
     it('initializes ref from hook with requestData', () => {
-      shallowRender(requestData);
+      renderForm(requestData);
       expect(useCreditRequestFormData).toHaveBeenCalledWith(requestData);
     });
   });
   describe('render output', () => {
     describe('null requestData', () => {
       it('returns null', () => {
-        shallowRender(null);
-        expect(el.isEmptyRender()).toEqual(true);
+        const { container } = renderForm(null);
+        expect(container.firstChild).toBeNull();
       });
     });
     describe('valid requestData', () => {
-      beforeEach(() => {
-        shallowRender(requestData);
-      });
-      test('snapshot', () => {
-        expect(el).toMatchSnapshot();
-      });
       it('loads Form with requestData url', () => {
-        expect(el.find('Form').props().action).toEqual(requestData.url);
+        const { container } = renderForm(requestData);
+        const creditForm = container.querySelector('form');
+        expect(creditForm).toBeInTheDocument();
+        expect(creditForm).toHaveAttribute('action', requestData.url);
       });
       it('loads a textarea form control for each requestData parameter', () => {
-        const controls = el.find('FormControl');
-        expect(controls.at(0).props().name).toEqual(paramKeys.key1);
-        expect(controls.at(0).props().value).toEqual(requestData.parameters.key1);
-        expect(controls.at(1).props().name).toEqual(paramKeys.key2);
-        expect(controls.at(1).props().value).toEqual(requestData.parameters.key2);
-        expect(controls.at(2).props().name).toEqual(paramKeys.key3);
-        expect(controls.at(2).props().value).toEqual(requestData.parameters.key3);
+        const { container } = renderForm(requestData);
+        const controls = container.querySelectorAll('textarea');
+        expect(controls.length).toEqual(Object.keys(requestData.parameters).length);
+        expect(controls[0]).toHaveAttribute('name', paramKeys.key1);
+        expect(controls[0]).toHaveValue(requestData.parameters.key1);
+        expect(controls[1]).toHaveAttribute('name', paramKeys.key2);
+        expect(controls[1]).toHaveValue(requestData.parameters.key2);
+        expect(controls[2]).toHaveAttribute('name', paramKeys.key3);
+        expect(controls[2]).toHaveValue(requestData.parameters.key3);
       });
     });
   });

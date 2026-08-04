@@ -1,35 +1,43 @@
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { reduxHooks } from 'hooks';
-import { htmlProps } from 'data/constants/htmlKeys';
 import useActionDisabledState from '../hooks';
 
 import SelectSessionButton from './SelectSessionButton';
 
 jest.mock('hooks', () => ({
   reduxHooks: {
-    useUpdateSelectSessionModalCallback: () => jest.fn().mockName('mockOpenSessionModal'),
+    useUpdateSelectSessionModalCallback: jest.fn(),
   },
 }));
 jest.mock('../hooks', () => jest.fn(() => ({ disableSelectSession: false })));
-jest.mock('./ActionButton', () => 'ActionButton');
 
-let wrapper;
+jest.mock('./ActionButton/hooks', () => jest.fn(() => false));
 
 describe('SelectSessionButton', () => {
   const props = { cardId: 'cardId' };
   it('default render', () => {
-    expect(wrapper).toMatchSnapshot();
-    wrapper = shallow(<SelectSessionButton {...props} />);
-    expect(wrapper.prop(htmlProps.disabled)).toEqual(false);
-    expect(wrapper.prop(htmlProps.onClick).getMockName()).toEqual(
-      reduxHooks.useUpdateSelectSessionModalCallback().getMockName(),
-    );
+    render(<IntlProvider locale="en"><SelectSessionButton {...props} /></IntlProvider>);
+    const button = screen.getByRole('button', { name: 'Select Session' });
+    expect(button).toBeInTheDocument();
   });
-  test('disabled states', () => {
-    useActionDisabledState.mockReturnValueOnce({ disableSelectSession: true });
-    expect(wrapper).toMatchSnapshot();
-    wrapper = shallow(<SelectSessionButton {...props} />);
-    expect(wrapper.prop(htmlProps.disabled)).toEqual(true);
+  describe('if useActionDisabledState is false', () => {
+    it('should disabled Select Session', () => {
+      useActionDisabledState.mockReturnValueOnce({ disableSelectSession: true });
+      render(<IntlProvider locale="en"><SelectSessionButton {...props} /></IntlProvider>);
+      const button = screen.getByRole('button', { name: 'Select Session' });
+      expect(button).toBeDisabled();
+    });
+  });
+  describe('on click', () => {
+    it('should call openSessionModal', async () => {
+      render(<IntlProvider locale="en"><SelectSessionButton {...props} /></IntlProvider>);
+      const user = userEvent.setup();
+      const button = screen.getByRole('button', { name: 'Select Session' });
+      await user.click(button);
+      expect(reduxHooks.useUpdateSelectSessionModalCallback).toHaveBeenCalledWith(props.cardId);
+    });
   });
 });

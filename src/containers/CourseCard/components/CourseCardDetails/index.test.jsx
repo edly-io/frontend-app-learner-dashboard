@@ -1,5 +1,4 @@
-import React from 'react';
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 
 import CourseCardDetails from '.';
 
@@ -28,27 +27,57 @@ describe('CourseCard Details component', () => {
       ...defaultHooks,
       ...hookOverrides,
     });
-    return shallow(<CourseCardDetails cardId={cardId} />);
+    return render(<CourseCardDetails cardId={cardId} />);
   };
 
-  test('has change session button on entitlement course', () => {
+  const fetchSeparators = (wrapper) => {
+    const elements = wrapper.container.querySelectorAll('*');
+    let separatorsCount = 0;
+
+    elements.forEach((element) => {
+      // Use a regular expression to find all occurrences of '•' in the text content
+      const separatorMatches = element.textContent.match(/•/g);
+
+      // If matches are found, add the count to the total
+      if (separatorMatches) {
+        separatorsCount += separatorMatches.length;
+      }
+    });
+
+    return separatorsCount;
+  };
+
+  it('has change session button on entitlement course', () => {
     const wrapper = createWrapper();
-    expect(wrapper).toMatchSnapshot();
+    const sessionButton = screen.getByRole('button', { name: defaultHooks.changeOrLeaveSessionMessage });
+    expect(sessionButton).toBeInTheDocument();
+
+    const accessMessage = screen.getByText((text) => text.includes(defaultHooks.accessMessage));
+    expect(accessMessage).toBeInTheDocument();
     // it has 3 separator, 4 column
-    expect(wrapper.text().match(/•/g)).toHaveLength(3);
+    expect(fetchSeparators(wrapper)).toBe(3);
   });
 
-  test('has change session button on entitlement course but no access message', () => {
+  it('has change session button on entitlement course but no access message', () => {
     const wrapper = createWrapper({ accessMessage: null });
-    expect(wrapper).toMatchSnapshot();
+    const sessionButton = screen.getByRole('button', { name: defaultHooks.changeOrLeaveSessionMessage });
+    expect(sessionButton).toBeInTheDocument();
+
+    const accessMessage = screen.queryByText((text) => text.includes(defaultHooks.accessMessage));
+    expect(accessMessage).toBeNull();
+
     // it has 2 separator, 3 column
-    expect(wrapper.text().match(/•/g)).toHaveLength(2);
+    expect(fetchSeparators(wrapper)).toBe(2);
   });
 
-  test('does not have change session button on regular course', () => {
+  it('does not have change session button on regular course', () => {
     const wrapper = createWrapper({ isEntitlement: false });
-    expect(wrapper).toMatchSnapshot();
+    const sessionButton = screen.queryByRole('button', { name: defaultHooks.changeOrLeaveSessionMessage });
+    expect(sessionButton).toBeNull();
+
+    const accessMessage = screen.getByText((text) => text.includes(defaultHooks.accessMessage));
+    expect(accessMessage).toBeInTheDocument();
     // it has 2 separator, 3 column
-    expect(wrapper.text().match(/•/g)).toHaveLength(2);
+    expect(fetchSeparators(wrapper)).toBe(2);
   });
 });

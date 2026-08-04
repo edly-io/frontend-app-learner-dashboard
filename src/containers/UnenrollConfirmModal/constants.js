@@ -1,5 +1,6 @@
 /* eslint-disable quotes */
 import { StrictDict } from 'utils';
+import { defineMessages } from '@edx/frontend-platform/i18n';
 
 export const reasonKeys = StrictDict({
   prereqs: 'prereqs',
@@ -12,25 +13,26 @@ export const reasonKeys = StrictDict({
   quality: 'quality',
   easy: 'easy',
   custom: 'custom',
+  preferNotToSay: 'prefer-not-to-say',
 });
 
 export const order = [
   reasonKeys.prereqs,
   reasonKeys.difficulty,
+  reasonKeys.easy,
   reasonKeys.goals,
   reasonKeys.broken,
   reasonKeys.time,
   reasonKeys.browse,
   reasonKeys.support,
   reasonKeys.quality,
-  reasonKeys.easy,
 ];
 
-const messages = StrictDict({
+const messages = defineMessages({
   [reasonKeys.prereqs]: {
     id: 'learner-dash.unenrollConfirm.reasons.prereqs',
     description: 'Unenroll reason option - missing prerequisites',
-    defaultMessage: `I don't have the academic or language prerequisites`,
+    defaultMessage: 'I don\'t have the academic or language prerequisites',
   },
   [reasonKeys.difficulty]: {
     id: 'learner-dash.unenrollConfirm.reasons.difficulty',
@@ -40,7 +42,7 @@ const messages = StrictDict({
   [reasonKeys.goals]: {
     id: 'learner-dash.unenrollConfirm.reasons.goals',
     description: 'Unenroll reason option - goals-related',
-    defaultMessage: `This won't help me reach my goals`,
+    defaultMessage: 'This won\'t help me reach my goals',
   },
   [reasonKeys.broken]: {
     id: 'learner-dash.unenrollConfirm.reasons.broken',
@@ -50,7 +52,7 @@ const messages = StrictDict({
   [reasonKeys.time]: {
     id: 'learner-dash.unenrollConfirm.reasons.time',
     description: 'Unenroll reason option - time-related',
-    defaultMessage: `I don't have the time`,
+    defaultMessage: 'I don\'t have the time',
   },
   [reasonKeys.browse]: {
     id: 'learner-dash.unenrollConfirm.reasons.browse',
@@ -60,7 +62,7 @@ const messages = StrictDict({
   [reasonKeys.support]: {
     id: 'learner-dash.unenrollConfirm.reasons.support',
     description: 'Unenroll reason option - lacking support',
-    defaultMessage: `I don't have enough support`,
+    defaultMessage: 'I don\'t have enough support',
   },
   [reasonKeys.quality]: {
     id: 'learner-dash.unenrollConfirm.reasons.quality',
@@ -76,6 +78,11 @@ const messages = StrictDict({
     id: 'learner-dash.unenrollConfirm.reasons.custom-placeholder',
     description: 'Unenroll custom reason option placeholder text',
     defaultMessage: 'Other',
+  },
+  [reasonKeys.preferNotToSay]: {
+    id: 'learner-dash.unenrollConfirm.reasons.prefer-not-to-say',
+    description: 'Unenroll reason option - prefer not to say',
+    defaultMessage: 'I prefer not to say',
   },
 });
 
