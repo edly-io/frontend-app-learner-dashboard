@@ -66,6 +66,7 @@ const mockHooks = (returnVals = {}) => {
     {
       shouldShowUnenrollItem: !!returnVals.shouldShowUnenrollItem,
       shouldShowDropdown: !!returnVals.shouldShowDropdown,
+      isPaidCourseMode: !!returnVals.isPaidCourseMode,
     },
     { isCardHook: true },
   );
@@ -152,7 +153,7 @@ describe('CourseCardMenu', () => {
             });
           });
           describe('masquerading', () => {
-            it('renders but unenroll is disabled', async () => {
+            it('renders but unenroll is disabled, with no paid-course tooltip', async () => {
               mockHooks({ ...hookProps, isMasquerading: true });
               renderComponent();
 
@@ -170,6 +171,48 @@ describe('CourseCardMenu', () => {
               expect(unenrollConfirmModal).toBeInTheDocument();
               const emailSettingsModal = screen.getByText('EmailSettingsModal');
               expect(emailSettingsModal).toBeInTheDocument();
+
+              await user.hover(unenrollOption);
+              expect(
+                screen.queryByText(messages.unenrollPaidCourseTooltip.defaultMessage),
+              ).toBeNull();
+            });
+          });
+          describe('paid course mode', () => {
+            it('renders unenroll disabled with a tooltip on hover', async () => {
+              mockHooks({ ...hookProps, isPaidCourseMode: true });
+              renderComponent();
+
+              const user = userEvent.setup();
+              const dropdown = screen.getByRole('button', { name: messages.dropdownAlt.defaultMessage });
+              await user.click(dropdown);
+
+              const unenrollOption = screen.getByRole('button', { name: messages.unenroll.defaultMessage });
+              expect(unenrollOption).toBeInTheDocument();
+              expect(unenrollOption).toHaveAttribute('aria-disabled', 'true');
+
+              await user.hover(unenrollOption);
+              expect(
+                await screen.findByText(messages.unenrollPaidCourseTooltip.defaultMessage),
+              ).toBeInTheDocument();
+            });
+          });
+          describe('free/audit course mode', () => {
+            it('renders unenroll enabled with no tooltip on hover', async () => {
+              mockHooks(hookProps);
+              renderComponent();
+
+              const user = userEvent.setup();
+              const dropdown = screen.getByRole('button', { name: messages.dropdownAlt.defaultMessage });
+              await user.click(dropdown);
+
+              const unenrollOption = screen.getByRole('button', { name: messages.unenroll.defaultMessage });
+              expect(unenrollOption).not.toHaveAttribute('aria-disabled', 'true');
+
+              await user.hover(unenrollOption);
+              expect(
+                screen.queryByText(messages.unenrollPaidCourseTooltip.defaultMessage),
+              ).toBeNull();
             });
           });
         });

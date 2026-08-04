@@ -37,7 +37,7 @@ export const useHandleToggleDropdown = (cardId) => {
 };
 
 export const useOptionVisibility = (cardId) => {
-  const { isEnrolled, isEmailEnabled } = reduxHooks.useCardEnrollmentData(cardId);
+  const { isEnrolled, isEmailEnabled, hasPaid } = reduxHooks.useCardEnrollmentData(cardId);
   const { twitter, facebook } = reduxHooks.useCardSocialSettingsData(cardId);
   const { isEarned } = reduxHooks.useCardCertificateData(cardId);
 
@@ -48,9 +48,11 @@ export const useOptionVisibility = (cardId) => {
     || facebook.isEnabled
     || twitter.isEnabled
   );
+  const isPaidCourseMode = !!hasPaid;
 
   return {
     shouldShowUnenrollItem,
     shouldShowDropdown,
+    isPaidCourseMode,
   };
 };

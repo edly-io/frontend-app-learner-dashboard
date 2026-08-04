@@ -96,6 +96,7 @@ describe('CourseCardMenu hooks', () => {
       reduxHooks.useCardEnrollmentData.mockReturnValueOnce({
         isEnrolled: !!returnVals.isEnrolled,
         isEmailEnabled: !!returnVals.isEmailEnabled,
+        hasPaid: returnVals.hasPaid,
       });
       reduxHooks.useCardCertificateData.mockReturnValueOnce({
         isEarned: !!returnVals.isEarned,
@@ -138,6 +139,21 @@ describe('CourseCardMenu hooks', () => {
       it('returns true if enrolled and not earned', () => {
         mockReduxHooks({ isEnrolled: true });
         expect(hooks.useOptionVisibility(cardId).shouldShowDropdown).toEqual(true);
+      });
+    });
+
+    describe('isPaidCourseMode', () => {
+      it('returns true when the enrollment has an ecommerce order (hasPaid)', () => {
+        mockReduxHooks({ hasPaid: true });
+        expect(hooks.useOptionVisibility(cardId).isPaidCourseMode).toEqual(true);
+      });
+      it('returns false for a verified enrollment with no order (financial assistance/coupon/staff-granted)', () => {
+        mockReduxHooks({ hasPaid: false });
+        expect(hooks.useOptionVisibility(cardId).isPaidCourseMode).toEqual(false);
+      });
+      it('returns false when hasPaid is not set', () => {
+        mockReduxHooks();
+        expect(hooks.useOptionVisibility(cardId).isPaidCourseMode).toEqual(false);
       });
     });
   });

@@ -16,6 +16,11 @@ const messages = defineMessages({
     description: 'Course email settings menu button',
     defaultMessage: 'Email settings',
   },
+  unenrollPaidCourseTooltip: {
+    id: 'learner-dash.courseCardMenu.unenrollPaidCourseTooltip',
+    description: 'Tooltip shown when hovering a disabled unenroll option for a paid course mode',
+    defaultMessage: 'You cannot unenroll a paid course',
+  },
   shareToFacebook: {
     id: 'learner-dash.courseCardMenu.shareToFacebook',
     description: 'Course Facebook Sharing button',
