@@ -6,6 +6,11 @@ const messages = defineMessages({
     description: 'Audit access expiration banner message',
     defaultMessage: 'Your access to this course has expired.',
   },
+  auditAccessExpiresSoon: {
+    id: 'learner-dash.courseCard.banners.auditAccessExpiresSoon',
+    description: 'Warning banner shown when audit/honor access is upcoming but not yet expired',
+    defaultMessage: 'Your access to this course expires on {accessExpirationDate}.',
+  },
   findAnotherCourse: {
     id: 'learner-dash.courseCard.banners.findAnotherCourse',
     description: 'Action prompt taking learners to course exploration',
