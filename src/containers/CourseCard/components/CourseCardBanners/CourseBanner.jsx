@@ -11,7 +11,9 @@ import messages from './messages';
 export const CourseBanner = ({ cardId }) => {
   const {
     isVerified,
+    isAudit,
     isAuditAccessExpired,
+    accessExpirationDate,
     coursewareAccess = {},
   } = reduxHooks.useCardEnrollmentData(cardId);
   const courseRun = reduxHooks.useCardCourseRunData(cardId);
@@ -32,6 +34,15 @@ export const CourseBanner = ({ cardId }) => {
             <Hyperlink isInline destination="">
               {formatMessage(messages.findAnotherCourse)}
             </Hyperlink>
+          </Banner>
+        )}
+
+      {(isAudit && accessExpirationDate && !isAuditAccessExpired)
+        && (
+          <Banner>
+            {formatMessage(messages.auditAccessExpiresSoon, {
+              accessExpirationDate: formatDate(accessExpirationDate),
+            })}
           </Banner>
         )}
 
