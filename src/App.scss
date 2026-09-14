@@ -27,6 +27,17 @@ $input-focus-box-shadow: var(--pgn-elevation-form-input-base); // hack to get up
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: 100dvh; // stylelint-disable-line declaration-block-no-duplicate-properties
+
+  // The App component renders a single wrapper <div> as the direct child of
+  // #root. Without flex: 1 on it, the div is only content-height and the
+  // flex-grow on <main> has no parent flex context to grow in, so the footer
+  // never reaches the bottom of the viewport on short pages.
+  > div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
 
   main {
     flex-grow: 1;
@@ -50,7 +61,7 @@ $input-focus-box-shadow: var(--pgn-elevation-form-input-base); // hack to get up
   }
 
   footer {
-    flex: 0;
+    flex: 0 0 auto;
   }
 }
 
