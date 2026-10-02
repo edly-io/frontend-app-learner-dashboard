@@ -6,6 +6,16 @@ const messages = defineMessages({
     description: 'Audit access expiration banner message',
     defaultMessage: 'Your access to this course has expired.',
   },
+  subscriptionExpired: {
+    id: 'learner-dash.courseCard.banners.subscriptionExpired',
+    description: 'Banner shown when the Rwaq subscription behind a course has ended',
+    defaultMessage: 'Your Rwaq subscription ended on {accessExpirationDate}. Renew it to continue.',
+  },
+  renewSubscription: {
+    id: 'learner-dash.courseCard.banners.renewSubscription',
+    description: 'Link to the Rwaq website to renew the subscription',
+    defaultMessage: 'Renew subscription',
+  },
   auditAccessExpiresSoon: {
     id: 'learner-dash.courseCard.banners.auditAccessExpiresSoon',
     description: 'Warning banner shown when audit/honor access is upcoming but not yet expired',

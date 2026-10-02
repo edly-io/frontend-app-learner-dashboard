@@ -13,6 +13,8 @@ export const CourseBanner = ({ cardId }) => {
     isVerified,
     isAudit,
     isAuditAccessExpired,
+    isSubscriptionExpired,
+    subscriptionRenewUrl,
     accessExpirationDate,
     coursewareAccess = {},
   } = reduxHooks.useCardEnrollmentData(cardId);
@@ -26,7 +28,24 @@ export const CourseBanner = ({ cardId }) => {
 
   return (
     <>
-      {isAuditAccessExpired
+      {isSubscriptionExpired
+        && (
+          <Banner>
+            {formatMessage(messages.subscriptionExpired, {
+              accessExpirationDate: formatDate(accessExpirationDate),
+            })}
+            {subscriptionRenewUrl && (
+              <>
+                {'  '}
+                <Hyperlink isInline destination={subscriptionRenewUrl}>
+                  {formatMessage(messages.renewSubscription)}
+                </Hyperlink>
+              </>
+            )}
+          </Banner>
+        )}
+
+      {(isAuditAccessExpired && !isSubscriptionExpired)
         && (
           <Banner>
             {formatMessage(messages.auditAccessExpired)}
@@ -37,7 +56,7 @@ export const CourseBanner = ({ cardId }) => {
           </Banner>
         )}
 
-      {(isAudit && accessExpirationDate && !isAuditAccessExpired)
+      {(isAudit && accessExpirationDate && !isAuditAccessExpired && !isSubscriptionExpired)
         && (
           <Banner>
             {formatMessage(messages.auditAccessExpiresSoon, {
