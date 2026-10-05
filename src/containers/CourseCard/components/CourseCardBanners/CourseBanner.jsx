@@ -14,6 +14,7 @@ export const CourseBanner = ({ cardId }) => {
     isAudit,
     isAuditAccessExpired,
     isSubscriptionExpired,
+    hadSubscription,
     subscriptionRenewUrl,
     accessExpirationDate,
     coursewareAccess = {},
@@ -31,16 +32,16 @@ export const CourseBanner = ({ cardId }) => {
       {isSubscriptionExpired
         && (
           <Banner>
-            {formatMessage(messages.subscriptionExpired, {
-              accessExpirationDate: formatDate(accessExpirationDate),
-            })}
-            {subscriptionRenewUrl && (
-              <>
-                {'  '}
-                <Hyperlink isInline destination={subscriptionRenewUrl}>
-                  {formatMessage(messages.renewSubscription)}
-                </Hyperlink>
-              </>
+            {formatMessage(
+              hadSubscription ? messages.subscriptionExpired : messages.subscriptionRequired,
+              {
+                accessExpirationDate: formatDate(accessExpirationDate),
+                renewLink: subscriptionRenewUrl ? (
+                  <Hyperlink isInline destination={subscriptionRenewUrl}>
+                    {formatMessage(hadSubscription ? messages.renewSubscription : messages.subscribe)}
+                  </Hyperlink>
+                ) : '',
+              },
             )}
           </Banner>
         )}

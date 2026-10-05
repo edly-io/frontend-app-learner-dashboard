@@ -69,6 +69,30 @@ describe('CourseBanner', () => {
       expect(auditAccessLink).toBeInTheDocument();
     });
   });
+  describe('subscription expired', () => {
+    const subscription = {
+      isSubscriptionExpired: true,
+      isAuditAccessExpired: true,
+      accessExpirationDate: '2026-09-01',
+      subscriptionRenewUrl: 'https://rwaq.example/my-account/subscriptions/',
+    };
+    it('names the end date and links to renew, inside the message', () => {
+      renderCourseBanner({ enrollment: { ...subscription, hadSubscription: true } });
+      expect(screen.getByText(/Your Rwaq subscription ended on 2026-09-01\./)).toBeInTheDocument();
+      const link = screen.getByText(formatMessage(messages.renewSubscription));
+      expect(link.closest('a')).toHaveAttribute('href', subscription.subscriptionRenewUrl);
+      expect(screen.queryByText(formatMessage(messages.auditAccessExpired))).toBeNull();
+    });
+    it('uses a neutral message with no date when the learner never subscribed', () => {
+      renderCourseBanner({ enrollment: { ...subscription, hadSubscription: false } });
+      expect(screen.getByText(/This course is part of the Rwaq subscription\./)).toBeInTheDocument();
+      expect(screen.queryByText(/ended on/)).toBeNull();
+      expect(screen.getByText(formatMessage(messages.subscribe)).closest('a')).toHaveAttribute(
+        'href',
+        subscription.subscriptionRenewUrl,
+      );
+    });
+  });
   describe('unmet prerequisites', () => {
     it('should display correct message', () => {
       renderCourseBanner({ enrollment: { coursewareAccess: { hasUnmetPrerequisites: true } } });
