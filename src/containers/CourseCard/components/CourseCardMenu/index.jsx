@@ -27,7 +27,7 @@ export const CourseCardMenu = ({ cardId }) => {
   const emailSettings = useEmailSettings();
   const unenrollModal = useUnenrollData();
   const handleToggleDropdown = useHandleToggleDropdown(cardId);
-  const { shouldShowUnenrollItem, shouldShowDropdown } = useOptionVisibility(cardId);
+  const { shouldShowUnenrollItem, isUnenrollBlocked, shouldShowDropdown } = useOptionVisibility(cardId);
   const { isMasquerading } = reduxHooks.useMasqueradeData();
   const { isEmailEnabled } = reduxHooks.useCardEnrollmentData(cardId);
 
@@ -49,11 +49,14 @@ export const CourseCardMenu = ({ cardId }) => {
         <Dropdown.Menu>
           {shouldShowUnenrollItem && (
             <Dropdown.Item
-              disabled={isMasquerading}
+              disabled={isMasquerading || isUnenrollBlocked}
               onClick={unenrollModal.show}
               data-testid={testIds.unenrollModalToggle}
             >
               {formatMessage(messages.unenroll)}
+              {isUnenrollBlocked && (
+                <small className="d-block text-gray-500">{formatMessage(messages.unenrollInProgram)}</small>
+              )}
             </Dropdown.Item>
           )}
           <SocialShareMenu cardId={cardId} emailSettings={emailSettings} />

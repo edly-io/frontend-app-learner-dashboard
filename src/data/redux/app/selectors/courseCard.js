@@ -93,6 +93,8 @@ export const courseCard = StrictDict({
 
         accessExpirationDate: module.loadDateVal(enrollment.accessExpirationDate),
         canUpgrade: enrollment.canUpgrade,
+        // Sent by the Rwaq backend, false for a learner in a program that contains the course.
+        canUnenroll: enrollment.canUnenroll !== false,
         isAudit: enrollment.isAudit,
         isAuditAccessExpired: enrollment.isAuditAccessExpired,
         isVerified: enrollment.isVerified,
