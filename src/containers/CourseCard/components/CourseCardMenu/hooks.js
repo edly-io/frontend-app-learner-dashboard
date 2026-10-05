@@ -37,11 +37,13 @@ export const useHandleToggleDropdown = (cardId) => {
 };
 
 export const useOptionVisibility = (cardId) => {
-  const { isEnrolled, isEmailEnabled } = reduxHooks.useCardEnrollmentData(cardId);
+  const { isEnrolled, isEmailEnabled, canUnenroll } = reduxHooks.useCardEnrollmentData(cardId);
   const { twitter, facebook } = reduxHooks.useCardSocialSettingsData(cardId);
   const { isEarned } = reduxHooks.useCardCertificateData(cardId);
 
   const shouldShowUnenrollItem = isEnrolled && !isEarned;
+  // A learner in a program leaves the program, not its courses.
+  const isUnenrollBlocked = shouldShowUnenrollItem && !canUnenroll;
   const shouldShowDropdown = (
     shouldShowUnenrollItem
     || isEmailEnabled
@@ -51,6 +53,7 @@ export const useOptionVisibility = (cardId) => {
 
   return {
     shouldShowUnenrollItem,
+    isUnenrollBlocked,
     shouldShowDropdown,
   };
 };
