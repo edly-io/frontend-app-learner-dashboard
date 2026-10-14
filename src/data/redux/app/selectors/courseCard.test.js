@@ -285,6 +285,13 @@ describe('courseCard selectors module', () => {
       it('passes isEmailEnabled', () => {
         expect(selected.isEmailEnabled).toEqual(testData.isEmailEnabled);
       });
+      it('passes canUnenroll, true unless the backend sends false', () => {
+        expect(selected.canUnenroll).toEqual(true);
+        loadSelector(courseCard.enrollment, { ...defaultData, canUnenroll: false });
+        expect(selected.canUnenroll).toEqual(false);
+        loadSelector(courseCard.enrollment, { ...defaultData, canUnenroll: true });
+        expect(selected.canUnenroll).toEqual(true);
+      });
       it('returns isExecEd2UCourse: false if mode is not in EXECUTIVE_EDUCATION_COURSE_MODES', () => {
         expect(selected.isExecEd2UCourse).toEqual(false);
       });

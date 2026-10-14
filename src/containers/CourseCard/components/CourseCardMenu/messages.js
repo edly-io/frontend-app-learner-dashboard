@@ -6,6 +6,11 @@ const messages = defineMessages({
     description: 'Course unenroll menu button',
     defaultMessage: 'Unenroll',
   },
+  unenrollInProgram: {
+    id: 'learner-dash.courseCardMenu.unenrollInProgram',
+    description: 'Hint on the disabled unenroll menu button of a course that belongs to the learner\'s program',
+    defaultMessage: 'Part of your program. Unenroll from the program instead.',
+  },
   dropdownAlt: {
     id: 'learner-dash.courseCardMenu.dropdownAlt',
     description: 'Course action menu alt-text',

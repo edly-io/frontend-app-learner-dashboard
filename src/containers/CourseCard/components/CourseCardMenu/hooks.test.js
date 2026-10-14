@@ -96,6 +96,7 @@ describe('CourseCardMenu hooks', () => {
       reduxHooks.useCardEnrollmentData.mockReturnValueOnce({
         isEnrolled: !!returnVals.isEnrolled,
         isEmailEnabled: !!returnVals.isEmailEnabled,
+        canUnenroll: returnVals.canUnenroll !== false,
       });
       reduxHooks.useCardCertificateData.mockReturnValueOnce({
         isEarned: !!returnVals.isEarned,
@@ -113,6 +114,23 @@ describe('CourseCardMenu hooks', () => {
       it('returns false if enrolled but also earned', () => {
         mockReduxHooks({ isEarned: true });
         expect(hooks.useOptionVisibility(cardId).shouldShowUnenrollItem).toEqual(false);
+      });
+    });
+
+    describe('isUnenrollBlocked', () => {
+      it('returns true if enrolled and not earned but the backend says the learner cannot unenroll', () => {
+        mockReduxHooks({ isEnrolled: true, canUnenroll: false });
+        const visibility = hooks.useOptionVisibility(cardId);
+        expect(visibility.shouldShowUnenrollItem).toEqual(true);
+        expect(visibility.isUnenrollBlocked).toEqual(true);
+      });
+      it('returns false if the learner can unenroll', () => {
+        mockReduxHooks({ isEnrolled: true });
+        expect(hooks.useOptionVisibility(cardId).isUnenrollBlocked).toEqual(false);
+      });
+      it('returns false if there is no unenroll item to block', () => {
+        mockReduxHooks({ canUnenroll: false });
+        expect(hooks.useOptionVisibility(cardId).isUnenrollBlocked).toEqual(false);
       });
     });
 

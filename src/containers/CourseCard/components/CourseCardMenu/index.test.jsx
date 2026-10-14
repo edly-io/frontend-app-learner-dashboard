@@ -65,6 +65,7 @@ const mockHooks = (returnVals = {}) => {
     hooks.useOptionVisibility,
     {
       shouldShowUnenrollItem: !!returnVals.shouldShowUnenrollItem,
+      isUnenrollBlocked: !!returnVals.isUnenrollBlocked,
       shouldShowDropdown: !!returnVals.shouldShowDropdown,
     },
     { isCardHook: true },
@@ -149,6 +150,19 @@ describe('CourseCardMenu', () => {
               expect(unenrollConfirmModal).toBeInTheDocument();
               const emailSettingsModal = screen.getByText('EmailSettingsModal');
               expect(emailSettingsModal).toBeInTheDocument();
+            });
+          });
+          describe('unenroll blocked by a program', () => {
+            it('renders a disabled unenroll item with a hint', async () => {
+              mockHooks({ ...hookProps, isUnenrollBlocked: true });
+              renderComponent();
+
+              const user = userEvent.setup();
+              await user.click(screen.getByRole('button', { name: messages.dropdownAlt.defaultMessage }));
+
+              const unenrollOption = screen.getByTestId('unenrollModalToggle');
+              expect(unenrollOption).toHaveAttribute('aria-disabled', 'true');
+              expect(screen.getByText(messages.unenrollInProgram.defaultMessage)).toBeInTheDocument();
             });
           });
           describe('masquerading', () => {

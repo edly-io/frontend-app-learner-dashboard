@@ -3,12 +3,9 @@ import PropTypes from 'prop-types';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Badge,
   Card,
   // Hyperlink,
-  Icon,
 } from '@openedx/paragon';
-import { Program } from '@openedx/paragon/icons';
 
 import messages from './messages';
 import './index.scss';
@@ -41,9 +38,6 @@ export const ProgramCard = ({ data }) => {
         subtitle={whiteFontWrapper(data.provider)}
       />
       <div className="ml-4">
-        <Badge variant="light" className="program-type-badge">
-          <Icon src={Program} className="d-inline-block" /> {data.programType}
-        </Badge>
         <div className="program-summary mt-2">
           {numCoursesMessage}
         </div>
@@ -56,7 +50,6 @@ ProgramCard.propTypes = {
     bannerImgSrc: PropTypes.string,
     logoImgSrc: PropTypes.string,
     numberOfCourses: PropTypes.number,
-    programType: PropTypes.string,
     programUrl: PropTypes.string,
     provider: PropTypes.string,
     title: PropTypes.string,

@@ -10,9 +10,8 @@ const props = {
     logoImgSrc: 'test logoImgSrc',
     title: 'test title',
     provider: 'test provider',
-    programType: 'test programType',
+    programType: 'Masters',
     programUrl: 'test programUrl',
-    programTypeUrl: 'test programTypeUrl',
   },
 };
 
@@ -31,9 +30,8 @@ describe('RelatedProgramsModal ProgramCard', () => {
       expect(title).toBeInTheDocument();
       expect(subtitle).toBeInTheDocument();
     });
-    it('badge', () => {
-      const badge = screen.getByText(props.data.programType);
-      expect(badge).toBeInTheDocument();
+    it('does not show the program type', () => {
+      expect(screen.queryByText(props.data.programType)).not.toBeInTheDocument();
     });
     it('courses number', () => {
       const coursesNumber = screen.getByText(`${props.data.numberOfCourses} Courses`);
