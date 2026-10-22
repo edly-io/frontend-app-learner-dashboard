@@ -14,6 +14,8 @@ export const CourseBanner = ({ cardId }) => {
     isAudit,
     isAuditAccessExpired,
     isSubscriptionExpired,
+    isSubscriptionEndingSoon,
+    subscriptionEndsAt,
     hadSubscription,
     subscriptionRenewUrl,
     accessExpirationDate,
@@ -43,6 +45,20 @@ export const CourseBanner = ({ cardId }) => {
                 ) : '',
               },
             )}
+          </Banner>
+        )}
+
+      {(isSubscriptionEndingSoon && !isSubscriptionExpired)
+        && (
+          <Banner>
+            {formatMessage(messages.subscriptionEndingSoon, {
+              subscriptionEndsAt: formatDate(subscriptionEndsAt),
+              renewLink: subscriptionRenewUrl ? (
+                <Hyperlink isInline destination={subscriptionRenewUrl}>
+                  {formatMessage(messages.renewSubscription)}
+                </Hyperlink>
+              ) : '',
+            })}
           </Banner>
         )}
 

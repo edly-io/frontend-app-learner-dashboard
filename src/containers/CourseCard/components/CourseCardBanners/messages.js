@@ -11,6 +11,11 @@ const messages = defineMessages({
     description: 'Banner shown when the Rwaq subscription behind a course has ended',
     defaultMessage: 'Your Rwaq subscription ended on {accessExpirationDate}. {renewLink}',
   },
+  subscriptionEndingSoon: {
+    id: 'learner-dash.courseCard.banners.subscriptionEndingSoon',
+    description: 'Banner shown when the Rwaq subscription behind a course is about to end',
+    defaultMessage: 'Your subscription is about to end on {subscriptionEndsAt}. {renewLink}',
+  },
   subscriptionRequired: {
     id: 'learner-dash.courseCard.banners.subscriptionRequired',
     description: 'Banner shown on a subscription course when the learner has no Rwaq subscription',

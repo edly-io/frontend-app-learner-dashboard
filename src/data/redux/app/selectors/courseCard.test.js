@@ -244,6 +244,8 @@ describe('courseCard selectors module', () => {
         canUpgrade: 'test-can-upgrade',
         isAudit: 'test-is-audit',
         isAuditAccessExpired: 'test-is-audit-access-expired',
+        isSubscriptionEndingSoon: true,
+        subscriptionEndsAt: '3000-10-25',
         isVerified: 'test-is-verified',
         isEmailEnabled: 'test-is-email-enabled',
         mode: 'default',
@@ -272,6 +274,10 @@ describe('courseCard selectors module', () => {
         testAccess({ isStaff: false, hasUnmetPrereqs: true, isTooEarly: false }, false);
         testAccess({ isStaff: false, hasUnmetPrereqs: true, isTooEarly: true }, false);
         testAccess({ isStaff: true, hasUnmetPrereqs: true, isTooEarly: true }, true);
+      });
+      it('passes the subscription ending flag and its end date, converted to date', () => {
+        expect(selected.isSubscriptionEndingSoon).toEqual(true);
+        expect(selected.subscriptionEndsAt).toEqual(new Date(testData.subscriptionEndsAt));
       });
       it('passes accessExpirationDate, converted to date', () => {
         expect(selected.accessExpirationDate).toEqual(new Date(testData.accessExpirationDate));
