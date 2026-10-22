@@ -12,6 +12,8 @@
     }
     .pgn__card-header-content {
       margin-top: 1.5rem;
+      // Paragon sets overflow: auto here, which shows a scroll bar beside the title and the menu.
+      overflow: visible;
     }
     .pgn__card-footer {
       flex-wrap: nowrap;
