@@ -13,6 +13,11 @@ export const CourseBanner = ({ cardId }) => {
     isVerified,
     isAudit,
     isAuditAccessExpired,
+    isSubscriptionExpired,
+    isSubscriptionEndingSoon,
+    subscriptionEndsAt,
+    hadSubscription,
+    subscriptionRenewUrl,
     accessExpirationDate,
     coursewareAccess = {},
   } = reduxHooks.useCardEnrollmentData(cardId);
@@ -26,7 +31,38 @@ export const CourseBanner = ({ cardId }) => {
 
   return (
     <>
-      {isAuditAccessExpired
+      {isSubscriptionExpired
+        && (
+          <Banner>
+            {formatMessage(
+              hadSubscription ? messages.subscriptionExpired : messages.subscriptionRequired,
+              {
+                accessExpirationDate: formatDate(accessExpirationDate),
+                renewLink: subscriptionRenewUrl ? (
+                  <Hyperlink isInline destination={subscriptionRenewUrl}>
+                    {formatMessage(hadSubscription ? messages.renewSubscription : messages.subscribe)}
+                  </Hyperlink>
+                ) : '',
+              },
+            )}
+          </Banner>
+        )}
+
+      {(isSubscriptionEndingSoon && !isSubscriptionExpired)
+        && (
+          <Banner>
+            {formatMessage(messages.subscriptionEndingSoon, {
+              subscriptionEndsAt: formatDate(subscriptionEndsAt),
+              renewLink: subscriptionRenewUrl ? (
+                <Hyperlink isInline destination={subscriptionRenewUrl}>
+                  {formatMessage(messages.renewSubscription)}
+                </Hyperlink>
+              ) : '',
+            })}
+          </Banner>
+        )}
+
+      {(isAuditAccessExpired && !isSubscriptionExpired)
         && (
           <Banner>
             {formatMessage(messages.auditAccessExpired)}
@@ -37,7 +73,7 @@ export const CourseBanner = ({ cardId }) => {
           </Banner>
         )}
 
-      {(isAudit && accessExpirationDate && !isAuditAccessExpired)
+      {(isAudit && accessExpirationDate && !isAuditAccessExpired && !isSubscriptionExpired)
         && (
           <Banner>
             {formatMessage(messages.auditAccessExpiresSoon, {
