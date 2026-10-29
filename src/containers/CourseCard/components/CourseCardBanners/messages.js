@@ -8,27 +8,27 @@ const messages = defineMessages({
   },
   subscriptionExpired: {
     id: 'learner-dash.courseCard.banners.subscriptionExpired',
-    description: 'Banner shown when the Rwaq subscription behind a course has ended',
-    defaultMessage: 'Your Rwaq subscription ended on {accessExpirationDate}. {renewLink}',
+    description: 'Banner shown when the platform subscription behind a course has ended',
+    defaultMessage: 'Your {siteName} subscription ended on {accessExpirationDate}. {renewLink}',
   },
   subscriptionEndingSoon: {
     id: 'learner-dash.courseCard.banners.subscriptionEndingSoon',
-    description: 'Banner shown when the Rwaq subscription behind a course is about to end',
+    description: 'Banner shown when the platform subscription behind a course is about to end',
     defaultMessage: 'Your subscription is about to end on {subscriptionEndsAt}. {renewLink}',
   },
   subscriptionRequired: {
     id: 'learner-dash.courseCard.banners.subscriptionRequired',
-    description: 'Banner shown on a subscription course when the learner has no Rwaq subscription',
-    defaultMessage: 'This course is part of the Rwaq subscription. {renewLink}',
+    description: 'Banner shown on a subscription course when the learner has no platform subscription',
+    defaultMessage: 'This course is part of the {siteName} subscription. {renewLink}',
   },
   subscribe: {
     id: 'learner-dash.courseCard.banners.subscribe',
-    description: 'Link to the Rwaq website to subscribe',
+    description: 'Link to the platform website to subscribe',
     defaultMessage: 'Subscribe to continue',
   },
   renewSubscription: {
     id: 'learner-dash.courseCard.banners.renewSubscription',
-    description: 'Link to the Rwaq website to renew the subscription',
+    description: 'Link to the platform website to renew the subscription',
     defaultMessage: 'Renew it to continue',
   },
   auditAccessExpiresSoon: {
