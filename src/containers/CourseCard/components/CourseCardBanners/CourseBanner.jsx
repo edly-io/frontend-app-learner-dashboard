@@ -2,6 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Hyperlink } from '@openedx/paragon';
+import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { utilHooks, reduxHooks } from 'hooks';
@@ -24,6 +25,7 @@ export const CourseBanner = ({ cardId }) => {
   const courseRun = reduxHooks.useCardCourseRunData(cardId);
   const { formatMessage } = useIntl();
   const formatDate = utilHooks.useFormatDate();
+  const siteName = getConfig().SITE_NAME || 'platform';
 
   const { hasUnmetPrerequisites, isStaff, isTooEarly } = coursewareAccess;
 
@@ -37,6 +39,7 @@ export const CourseBanner = ({ cardId }) => {
             {formatMessage(
               hadSubscription ? messages.subscriptionExpired : messages.subscriptionRequired,
               {
+                siteName,
                 accessExpirationDate: formatDate(accessExpirationDate),
                 renewLink: subscriptionRenewUrl ? (
                   <Hyperlink isInline destination={subscriptionRenewUrl}>

@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { mergeConfig } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { reduxHooks } from 'hooks';
@@ -51,6 +52,7 @@ const renderCourseBanner = (overrides = {}) => {
 };
 
 describe('CourseBanner', () => {
+  beforeAll(() => { mergeConfig({ SITE_NAME: 'Arbisoft' }); });
   it('initializes data with course number from enrollment, course and course run data', () => {
     renderCourseBanner();
     expect(reduxHooks.useCardCourseRunData).toHaveBeenCalledWith(cardId);
@@ -78,14 +80,14 @@ describe('CourseBanner', () => {
     };
     it('names the end date and links to renew, inside the message', () => {
       renderCourseBanner({ enrollment: { ...subscription, hadSubscription: true } });
-      expect(screen.getByText(/Your Rwaq subscription ended on 2026-09-01\./)).toBeInTheDocument();
+      expect(screen.getByText(/Your Arbisoft subscription ended on 2026-09-01\./)).toBeInTheDocument();
       const link = screen.getByText(formatMessage(messages.renewSubscription));
       expect(link.closest('a')).toHaveAttribute('href', subscription.subscriptionRenewUrl);
       expect(screen.queryByText(formatMessage(messages.auditAccessExpired))).toBeNull();
     });
     it('uses a neutral message with no date when the learner never subscribed', () => {
       renderCourseBanner({ enrollment: { ...subscription, hadSubscription: false } });
-      expect(screen.getByText(/This course is part of the Rwaq subscription\./)).toBeInTheDocument();
+      expect(screen.getByText(/This course is part of the Arbisoft subscription\./)).toBeInTheDocument();
       expect(screen.queryByText(/ended on/)).toBeNull();
       expect(screen.getByText(formatMessage(messages.subscribe)).closest('a')).toHaveAttribute(
         'href',
@@ -122,7 +124,7 @@ describe('CourseBanner', () => {
         },
       });
       expect(screen.queryByText(/about to end/)).toBeNull();
-      expect(screen.getByText(/Your Rwaq subscription ended on 2026-09-01\./)).toBeInTheDocument();
+      expect(screen.getByText(/Your Arbisoft subscription ended on 2026-09-01\./)).toBeInTheDocument();
     });
   });
   describe('unmet prerequisites', () => {
