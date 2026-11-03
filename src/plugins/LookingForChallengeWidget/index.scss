@@ -4,3 +4,24 @@
     min-width: auto;
   }
 }
+
+// RTL only: the artwork is slanted on one side and does not flip with the layout, so mirror it
+// to keep the slant facing the text, and let the text wrap instead of overflowing the image.
+html[dir="rtl"] #looking-for-challenge-widget {
+  .pgn__card-wrapper-image-cap {
+    flex-shrink: 0;
+  }
+
+  .pgn__card-image-cap {
+    transform: scaleX(-1);
+  }
+
+  .pgn__card-body {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  a {
+    white-space: normal;
+  }
+}
